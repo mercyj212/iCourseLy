@@ -3,7 +3,7 @@
     class="rotate-90 group flex flex-col items-center justify-start
            cursor-pointer bg-black text-white
            transition-all duration-500 overflow
-           h-10 hover:h-20 w-16 text-xs"
+           h-10 hover:h-20 w-10 text-xs"
   >
     <!-- Roman numeral -->
      
