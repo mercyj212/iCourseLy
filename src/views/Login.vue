@@ -49,42 +49,35 @@
             v-model="email"
             required
             placeholder="Enter your email"
-            class="mt-1 w-full h-12 border-2 border-white/20 rounded-md px-4 py-2 bg-transparent text-black outline-none focus:ring-offset-1 transition-all"
+            class="mt-1 w-full h-12 border-2 border-white/20 rounded-md px-4 py-2 bg-transparent text-black outline-none transition-all"
             autocomplete="email"
           />
         </div>
 
         <div class="relative">
           <label class="block text-md font-bold text-black">Password</label>
-
-          <!-- Password input wrapper so the eye sits inside -->
-          <div class="mt-1 relative">
+          <div class="mt-1 relative border-2 border-white/20 rounded-md">
             <input
               :type="showPassword ? 'text' : 'password'"
               v-model="password"
               required
               placeholder="Enter your password"
-              class="w-full h-12 border-2 border-white/20 rounded-md pr-12 pl-4 py-2 bg-transparent text-black outline-none transition-all"
+              class="w-full h-12 pr-12 pl-4 py-2 bg-transparent text-black outline-none transition-all"
               autocomplete="current-password"
             />
 
-            <!-- Eye button inside input (right) -->
             <button
               type="button"
               @click="togglePassword"
               :aria-pressed="showPassword.toString()"
               :title="showPassword ? 'Hide password' : 'Show password'"
-              class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md "
+              class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md"
             >
-              <!-- switch icons based on state -->
               <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <!-- Eye icon -->
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-
               <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <!-- Eye-off icon -->
                 <path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.46 21.46 0 014.12-6.06"></path>
                 <path d="M1 1l22 22"></path>
                 <path d="M9.88 9.88A3 3 0 0112 9c1.66 0 3 1.34 3 3 0 .24-.03.48-.09.7"></path>
@@ -94,10 +87,7 @@
         </div>
 
         <div class="flex justify-end">
-          <router-link
-            to="/forgot-password"
-            class="text-md text-black font-medium hover:underline decoration-2"
-          >
+          <router-link to="/forgot-password" class="text-md text-black font-medium hover:underline decoration-2">
             Forgot Password?
           </router-link>
         </div>
@@ -108,25 +98,31 @@
           class="w-full bg-[#1A1836] text-white font-bold py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 flex justify-center items-center gap-2 disabled:opacity-60"
           :disabled="loading"
         >
-          <span>{{ activeTab === 'student' ? 'Login as Student' : 'Login as Instructor' }}</span>
-          <svg v-if="loading" class="w-5 h-5 animate-spin text-white" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-          </svg>
+          <span>{{ loading ? "Signing In....." : activeTab === 'student' ? 'Sign in as Student' : 'Sign in as Instructor' }}</span>
         </button>
 
         <!-- Error message -->
-        <p v-if="errorMessage" class="text-red-500 text-center mt-2 font-semibold" ref="errorMsg">
+        <p v-if="errorMessage" class="text-red-800 text-center mt-2 font-semibold" ref="errorMsg">
           {{ errorMessage }}
         </p>
+
+        <!-- Resend Verification Button -->
+        <div v-if="showResend" class="text-center mt-3">
+          <button
+            @click="resendVerification"
+            class="text-[#1A1836] font-bold underline hover:opacity-80"
+            :disabled="loading"
+          >
+            Resend Verification Email
+          </button>
+        </div>
       </form>
 
       <!-- Register Link -->
       <p class="text-center text-md text-black mt-4">
         Don’t have an account?
         <router-link to="/register" class="text-[#1A1836] font-bold hover:underline decoration-2">
-          Register
+          Sign Up
         </router-link>
       </p>
     </div>
@@ -136,7 +132,7 @@
 <script>
 import Navbar from "../components/Navbar.vue";
 import gsap from "gsap";
-import { login } from "../services/auth";
+import { login, resendVerification } from "../services/auth";
 
 export default {
   name: "LoginView",
@@ -148,11 +144,11 @@ export default {
       password: "",
       loading: false,
       errorMessage: "",
-      showPassword: false
+      showPassword: false,
+      showResend: false, 
     };
   },
   mounted() {
-    // Entrance animations
     gsap.from([this.$refs.studentBtn, this.$refs.instructorBtn], {
       y: 50, opacity: 0, duration: 1, stagger: 0.2, ease: "back.out(1.7)"
     });
@@ -166,49 +162,68 @@ export default {
 
     tabClasses(role) {
       const base = 'rotate-90 px-6 py-3 font-bold uppercase tracking-wider rounded-lg shadow-lg transition-all duration-500';
-      if (role === 'student') {
-        return [base, this.activeTab === 'student' ? 'bg-gradient-to-r from-[#622347] via-[#E084B2] to-[#42164B] text-white' : 'bg-black text-[#E0B4B2]'];
-      }
+      if (role === 'student') return [base, this.activeTab === 'student' ? 'bg-gradient-to-r from-[#622347] via-[#E084B2] to-[#42164B] text-white' : 'bg-black text-[#E0B4B2]'];
       return [base, this.activeTab === 'instructor' ? 'bg-gradient-to-r from-[#110801] via-[#E0B4B2] to-[#42164B] text-white' : 'bg-[#0a0a0a] text-[#ad1dca]'];
     },
 
-    togglePassword() {
-      this.showPassword = !this.showPassword;
-      // Optional: brief animation on toggle
-      gsap.fromTo(this.$el.querySelector('input[type="' + (this.showPassword ? 'text' : 'password') + '"]'), { scale: 0.99 }, { scale: 1, duration: 0.12 });
-    },
+    togglePassword() { this.showPassword = !this.showPassword; },
 
     async handleLogin() {
       this.loading = true;
       this.errorMessage = "";
+      this.showResend = false;
 
       try {
         const response = await login({ email: this.email, password: this.password });
         const user = response.data;
 
-        // Role validation
         if (user.role !== this.activeTab) {
-          this.loading = false;
           this.errorMessage = `You are not a ${this.activeTab}`;
-          gsap.fromTo(this.$refs.errorMsg, { y: -8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "bounce.out" });
+          this.loading = false;
+          this.animateError();
           return;
         }
 
-        // success
-        this.loading = false;
         localStorage.setItem("token", user.token);
-
         if (user.role === "student") this.$router.push("/student-dashboard");
         else if (user.role === "instructor") this.$router.push("/instructor-dashboard");
         else this.$router.push("/admin-dashboard");
 
       } catch (err) {
+        const msg = err.response?.data?.message || "Invalid credentials, please try again.";
+        this.errorMessage = msg;
+
+        if (msg.toLowerCase().includes("verify")) {
+          this.showResend = true;
+        }
+
+        this.$nextTick(() => this.animateError());
+      } finally {
         this.loading = false;
-        this.errorMessage = err.response?.data?.message || "Invalid credentials, please try again.";
-        // animate error
-        this.$nextTick(() => {
-          if (this.$refs.errorMsg) gsap.fromTo(this.$refs.errorMsg, { y: -8, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: "bounce.out" });
-        });
+      }
+    },
+
+    async resendVerification() {
+      this.loading = true;
+      try {
+        await resendVerification(this.email);
+        this.errorMessage = "Verification email resent! Please check your inbox.";
+        this.showResend = false;
+      } catch (err) {
+        this.errorMessage = err.response?.data?.message || "Failed to resend email.";
+      } finally {
+        this.loading = false;
+        this.$nextTick(() => this.animateError());
+      }
+    },
+
+    animateError() {
+      if (this.$refs.errorMsg) {
+        gsap.fromTo(
+          this.$refs.errorMsg,
+          { y: -8, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, ease: "bounce.out" }
+        );
       }
     }
   }
@@ -219,14 +234,6 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 .font-poppins { font-family: "Poppins", sans-serif; }
 
-
-input[type="password"],
-input[type="text"] {
-  border: none;
-}
-
-/* Optional: slightly darker focus ring for the eye button */
-button[aria-pressed] {
-  background: transparent;
-}
+input[type="password"], input[type="text"] { border: none; }
+button[aria-pressed] { background: transparent; }
 </style>
