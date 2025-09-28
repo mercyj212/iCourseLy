@@ -1,10 +1,19 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center font-poppins  px-4">
+  <div class="min-h-screen flex items-center justify-center font-poppins px-4">
     <!-- Loader Overlay -->
     <div v-if="loading" class="fixed inset-0 flex items-center justify-center bg-black/60 z-50">
       <svg class="w-12 h-12 animate-spin text-white" viewBox="0 0 100 100" aria-hidden="true">
-        <circle cx="50" cy="50" r="45" fill="none" stroke-width="4" stroke="currentColor"
-          stroke-linecap="round" stroke-dasharray="282.6" stroke-dashoffset="75"/>
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke-width="4"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-dasharray="282.6"
+          stroke-dashoffset="75"
+        />
       </svg>
     </div>
 
@@ -23,7 +32,7 @@
       <!-- Error -->
       <div v-else>
         <p class="text-red-700 font-semibold mb-4">❌ {{ message }}</p>
-        <button 
+        <button
           @click="resendVerificationEmail"
           class="bg-[#1A1836] text-white px-4 py-2 rounded-md font-bold hover:scale-105 transition-transform"
           :disabled="resending"
@@ -46,7 +55,8 @@ export default {
       resending: false,
       success: false,
       message: "",
-      token: this.$route.params.token || null, // Get token from URL
+      token: this.$route.params.token || null, // Token from URL
+      email: localStorage.getItem("userEmail") || null, // Save email when user registers/logs in
     };
   },
   async mounted() {
@@ -57,7 +67,8 @@ export default {
         this.message = res.data.message || "Your email has been verified successfully!";
       } catch (err) {
         this.success = false;
-        this.message = err.response?.data?.message || "Invalid or expired verification link.";
+        this.message =
+          err.response?.data?.message || "Invalid or expired verification link.";
       } finally {
         this.loading = false;
       }
@@ -69,12 +80,18 @@ export default {
   },
   methods: {
     async resendVerificationEmail() {
+      if (!this.email) {
+        this.message = "Cannot resend verification email. Email not found.";
+        return;
+      }
+
       this.resending = true;
       try {
-        await resendVerification(this.token);
+        await resendVerification({ email: this.email });
         this.message = "A new verification email has been sent to your inbox.";
       } catch (err) {
-        this.message = err.response?.data?.message || "Failed to resend verification email.";
+        this.message =
+          err.response?.data?.message || "Failed to resend verification email.";
       } finally {
         this.resending = false;
       }
