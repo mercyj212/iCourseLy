@@ -1,5 +1,5 @@
 <template>
-  <div class="relative min-h-screen bg-black text-white overflow-hidden">
+  <div class="relative min-h-screen bg-trans text-white overflow-hidden">
     <!-- Loader -->
     <div v-if="loading" class="absolute bottom-4 left-20 flex flex-col items-center">
       <svg class="w-10 h-10" viewBox="0 0 100 100">
@@ -25,21 +25,18 @@
       ref="textContainer"
       class="absolute inset-0 flex flex-col justify-center items-center text-center space-x-6"
     >
-      <div
-        v-for="(line, index) in splitLines"
+      <span
+        v-for="(line, index) in lines"
         :key="index"
-        class="mb-0 leading-none tracking-wide font-bold uppercase text-[50px] sm:text-[80px] md:text-[120px] lg:text-[130px]"
+        class="opacity-0 text-[50px] sm:text-[80px] md:text-[120px] lg:text-[130px] font-bold mb-0 leading-none tracking-wide uppercase text-[#622347]"
       >
-        <!-- Each character -->
-        <span
-          v-for="(char, cIndex) in line"
-          :key="cIndex"
-          class="inline-block letter"
-          :class="{ 'text-[#E0B4B2] italic lowercase': lines[index] === 'iCourseLy', 'text-[#622347]': lines[index] !== 'iCourseLy' }"
-        >
-          {{ char }}
+        <span v-if="line === 'iCourseLy'" class="text-[#E0B4B2] italic lowercase">
+          {{ line }}
         </span>
-      </div>
+        <span v-else>
+          {{ line }}
+        </span>
+      </span>
     </div>
 
     <!-- Sidebar (desktop only) -->
@@ -77,73 +74,50 @@ export default {
     const navbar = ref(null);
 
     const lines = ["start An", "iCourseLy", "COPYWRITing", "journey"];
-    const splitLines = lines.map(line => line.split("")); // array of characters
     const isMobile = window.innerWidth < 768;
 
     onMounted(() => {
-      // Loader animation
+      // Ensure loader shows
+      loading.value = true;
+
+      // Animate loader
       gsap.to(loaderCircle.value, {
         strokeDashoffset: 0,
         duration: 3,
         ease: "steps(100)",
-        onComplete: () => (loading.value = false)
+        onComplete: () => {
+          loading.value = false; // Hide loader when done
+        }
       });
 
-      // Animate letters in
+      // Start text animation at 30% of loader duration
       setTimeout(() => {
-        const letters = textContainer.value.querySelectorAll(".letter");
-        gsap.fromTo(
-          letters,
-          { opacity: 0, y: window.innerHeight },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 1.5,
-            stagger: 0.05,
-            ease: "power2.out",
-            onComplete: handleTextAnimation
-          }
-        );
-      }, 600);
-
-      // Scatter effect
-      window.addEventListener("mousemove", scatterEffect);
-      window.addEventListener("mouseleave", resetEffect);
-    });
-
-    // Scatter letters
-    function scatterEffect() {
-      const letters = textContainer.value.querySelectorAll(".letter");
-      letters.forEach(letter => {
-        gsap.to(letter, {
-          x: gsap.utils.random(-50, 50),
-          y: gsap.utils.random(-80, 80),
-          rotation: gsap.utils.random(-45, 45),
-          duration: 0.5,
-          ease: "power2.out"
+        Array.from(textContainer.value.children).forEach((line, index) => {
+          gsap.fromTo(
+            line,
+            { opacity: 0, y: window.innerHeight },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 2,
+              delay: index * 0.7,
+              ease: "power2.out",
+              onComplete: index === lines.length - 1 ? handleTextAnimation : null
+            }
+          );
         });
-      });
-    }
-
-    // Reset letters
-    function resetEffect() {
-      const letters = textContainer.value.querySelectorAll(".letter");
-      gsap.to(letters, {
-        x: 0,
-        y: 0,
-        rotation: 0,
-        duration: 1,
-        ease: "elastic.out(1, 0.5)"
-      });
-    }
+      }, 1000 * 0.2);
+    });
 
     function handleTextAnimation() {
       if (isMobile) {
+        // 📱 Mobile: center → top only
         gsap.to(textContainer.value, {
           y: -window.innerHeight / 7,
           duration: 1.5,
           ease: "power2.inOut",
           onComplete: () => {
+            // Show navbar on mobile
             navbarVisible.value = true;
             nextTick(() => {
               gsap.fromTo(
@@ -155,6 +129,7 @@ export default {
           }
         });
       } else {
+        // 💻 Desktop: original flow
         moveTextLeft();
       }
     }
@@ -164,27 +139,32 @@ export default {
       const padding = 20;
       const moveDistance = window.innerWidth / 9 - sidebarWidth - padding;
 
+      // Slide text to left
       gsap.to(textContainer.value, {
         x: -moveDistance,
         duration: 1.5,
         ease: "power2.inOut",
         onComplete: async () => {
+          // Move text up
           gsap.to(textContainer.value, {
             y: -window.innerHeight / 20,
             duration: 1.5,
             ease: "power2.inOut",
             onComplete: async () => {
+              // Show sidebar + navbar at the same time
               sidebarVisible.value = true;
               navbarVisible.value = true;
 
               await nextTick();
 
+              // Sidebar animation
               gsap.fromTo(
                 sidebar.value.$el,
                 { x: -sidebarWidth - 50 },
                 { x: 0, duration: 1, ease: "power2.out" }
               );
 
+              // Navbar animation
               gsap.fromTo(
                 navbar.value.$el,
                 { y: -100, opacity: 0 },
@@ -201,7 +181,6 @@ export default {
       loaderCircle,
       textContainer,
       lines,
-      splitLines,
       sidebar,
       navbar,
       sidebarVisible,

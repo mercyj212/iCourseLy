@@ -12,6 +12,7 @@
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
+    "blotter": "^2.1.0",
     "gsap": "^3.13.0",
     "locomotive-scroll": "^4.1.4",
     "tailwindcss": "^4.1.13",

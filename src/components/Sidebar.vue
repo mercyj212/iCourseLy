@@ -42,8 +42,17 @@
       
             <!-- Login & Register at the bottom -->
         <div  class="rotate-90 mt-auto mb-16 flex items-center gap-6 text-black font-bold text-md ">
-          <button class="px-6 py-3 bg-[#622467] hover:bg-[#E084B2] rounded uppercase">Login</button>
-          <button class="px-6 py-3 bg-[#42164B] hover:bg-[#E084B2] rounded uppercase">Register</button>
+          <router-link to="/login">
+            <button class="px-6 py-3 bg-[#622467] hover:bg-[#E084B2] rounded uppercase">
+              Login
+            </button>
+          </router-link>
+
+          <router-link to="/register">
+            <button class="px-6 py-3 bg-[#42164B] hover:bg-[#E084B2] rounded uppercase">
+              Register
+            </button>
+          </router-link>
         </div>
 
       <!-- Fullscreen overlay (covers everything except sidebar) -->
