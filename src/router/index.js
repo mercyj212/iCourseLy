@@ -35,7 +35,7 @@ const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
-  { path: '/verify-email', name: 'VerifyEmail', component: VerifyEmail },
+  { path: '/verify-email/:token', name: 'VerifyEmail', component: VerifyEmail, props: true },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPassword },
 
