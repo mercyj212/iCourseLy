@@ -87,7 +87,7 @@ export default {
 
       this.resending = true;
       try {
-        await resendVerification({ email: this.email });
+        await resendVerification( this.email );
         this.message = "A new verification email has been sent to your inbox.";
       } catch (err) {
         this.message =
