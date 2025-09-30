@@ -32,13 +32,34 @@
       <!-- Error -->
       <div v-else>
         <p class="text-red-700 font-semibold mb-4">❌ {{ message }}</p>
-        <button
-          @click="resendVerificationEmail"
-          class="bg-[#1A1836] text-white px-4 py-2 rounded-md font-bold hover:scale-105 transition-transform"
-          :disabled="resending"
-        >
-          {{ resending ? "Resending..." : "Resend Verification Email" }}
-        </button>
+
+        <!-- Email input if missing -->
+        <div v-if="!email">
+          <input
+            v-model="emailInput"
+            type="email"
+            placeholder="Enter your email to resend"
+            class="border p-2 rounded w-full mb-4"
+          />
+          <button
+            @click="resendVerificationEmail"
+            class="bg-[#1A1836] text-white px-4 py-2 rounded-md font-bold hover:scale-105 transition-transform w-full"
+            :disabled="resending || !emailInput"
+          >
+            {{ resending ? "Resending..." : "Resend Verification Email" }}
+          </button>
+        </div>
+
+        <!-- Resend button if email exists -->
+        <div v-else>
+          <button
+            @click="resendVerificationEmail"
+            class="bg-[#1A1836] text-white px-4 py-2 rounded-md font-bold hover:scale-105 transition-transform w-full"
+            :disabled="resending"
+          >
+            {{ resending ? "Resending..." : "Resend Verification Email" }}
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -55,40 +76,44 @@ export default {
       resending: false,
       success: false,
       message: "",
-      token: this.$route.params.token || null, // Token from URL
-      email: localStorage.getItem("userEmail") || null, // Save email when user registers/logs in
+      token: this.$route.params.token || null,
+      email: localStorage.getItem("userEmail") || this.$route.query.email || null,
+      emailInput: "",
     };
   },
   async mounted() {
-    if (this.token) {
-      try {
-        const res = await verifyEmail(this.token);
-        this.success = true;
-        this.message = res.data.message || "Your email has been verified successfully!";
-      } catch (err) {
-        this.success = false;
-        this.message =
-          err.response?.data?.message || "Invalid or expired verification link.";
-      } finally {
-        this.loading = false;
-      }
-    } else {
+    if (!this.token) {
       this.success = false;
       this.message = "No verification token provided.";
+      this.loading = false;
+      return;
+    }
+
+    try {
+      const res = await verifyEmail(this.token);
+      this.success = true;
+      this.message = res.data.message || "Your email has been verified successfully!";
+    } catch (err) {
+      this.success = false;
+      this.message =
+        err.response?.data?.message || "Invalid or expired verification link.";
+    } finally {
       this.loading = false;
     }
   },
   methods: {
     async resendVerificationEmail() {
-      if (!this.email) {
-        this.message = "Cannot resend verification email. Email not found.";
+      const emailToUse = this.email || this.emailInput;
+      if (!emailToUse) {
+        this.message = "Please provide a valid email to resend verification.";
         return;
       }
 
       this.resending = true;
       try {
-        await resendVerification( this.email );
+        await resendVerification(emailToUse);
         this.message = "A new verification email has been sent to your inbox.";
+        this.email = emailToUse;
       } catch (err) {
         this.message =
           err.response?.data?.message || "Failed to resend verification email.";
