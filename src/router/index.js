@@ -38,7 +38,7 @@ const routes = [
   { path: '/verify-email', name: 'VerifyEmail', component: VerifyEmail },
   { path: '/verify-email/:token', name: 'VerifyEmailToken', component: VerifyEmail, props: true },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
-  { path: '/reset-password', name: 'ResetPassword', component: ResetPassword },
+  { path: '/reset-password//:token', name: 'ResetPassword', component: ResetPassword },
 
   // Student
   { path: '/student', name: 'StudentDashboard', component: StudentDashboard, meta: { requiresAuth: true, role: "student"} },
