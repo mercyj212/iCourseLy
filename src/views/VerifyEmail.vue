@@ -1,5 +1,8 @@
 <template>
   <div class="min-h-screen flex items-center justify-center font-poppins px-4">
+
+     <Navbar class="absolute top-0 left-0 right-0 z-50" :hideAuth="true" />
+
     <div class="bg-white shadow-xl rounded-xl p-8 max-w-md w-full text-center">
 
       <!-- Loader -->
@@ -14,7 +17,7 @@
       <!-- STATE 1: Confirm (initial) -->
       <div v-else-if="state === 'confirm'">
         <LottieAnimation path="/animations/email-verification.json" :size="200" :loop="true" />
-        <h1 class="text-2xl font-bold text-black mt-4">Email Not Verified</h1>
+        <h1 class="text-2xl font-bold text-black mb-6">Verify Email</h1>
         <p class="text-gray-600 mt-2 text-sm">
           Please click the button below to verify your email and confirm that you are the owner of this account.
         </p>
@@ -86,10 +89,11 @@
 <script>
 import { verifyEmail, resendVerification } from "../services/auth";
 import LottieAnimation from "../components/LottieAnimation.vue";
+import Navbar from "../components/Navbar.vue";
 
 export default {
   name: "VerifyEmail",
-  components: { LottieAnimation },
+  components: { LottieAnimation, Navbar },
   data() {
     return {
       loading: true,

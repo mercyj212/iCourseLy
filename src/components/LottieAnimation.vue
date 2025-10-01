@@ -11,7 +11,7 @@ export default {
     path: { type: String, required: true },   // e.g. "/animations/mail.json"
     loop: { type: Boolean, default: true },
     autoplay: { type: Boolean, default: true },
-    size: { type: Number, default: 180 }
+    size: { type: Number, default: 500 }
   },
   mounted() {
     this.anim = lottie.loadAnimation({
