@@ -73,11 +73,11 @@
               :title="showPassword ? 'Hide password' : 'Show password'"
               class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-md"
             >
-              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"></path>
                 <circle cx="12" cy="12" r="3"></circle>
               </svg>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg v-else xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a21.46 21.46 0 014.12-6.06"></path>
                 <path d="M1 1l22 22"></path>
                 <path d="M9.88 9.88A3 3 0 0112 9c1.66 0 3 1.34 3 3 0 .24-.03.48-.09.7"></path>
@@ -98,7 +98,7 @@
           class="w-full bg-[#1A1836] text-white font-bold py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 flex justify-center items-center gap-2 disabled:opacity-60"
           :disabled="loading"
         >
-          <span>{{ loading ? "Signing In....." : activeTab === 'student' ? 'Sign in as Student' : 'Sign in as Instructor' }}</span>
+          <span>{{ loading ? "Signing In..." : activeTab === 'student' ? 'Sign in as Student' : 'Sign in as Instructor' }}</span>
         </button>
 
         <!-- Error message -->
@@ -113,7 +113,7 @@
             class="text-[#1A1836] font-bold underline hover:opacity-80"
             :disabled="loading"
           >
-            Resend Verification Email
+            Verify Email
           </button>
         </div>
       </form>
@@ -145,7 +145,8 @@ export default {
       loading: false,
       errorMessage: "",
       showPassword: false,
-      showResend: false, 
+      showResend: false,
+      showVerifyLink: false
     };
   },
   mounted() {
@@ -168,15 +169,21 @@ export default {
 
     togglePassword() { this.showPassword = !this.showPassword; },
 
+    // ============ LOGIN ============
     async handleLogin() {
       this.loading = true;
       this.errorMessage = "";
       this.showResend = false;
+      this.showVerifyLink = false;
 
       try {
         const response = await login({ email: this.email, password: this.password });
-        const user = response.data;
+        console.log("Login Response:", response.data); // Debug
 
+        const user = response.data.user;
+        const token = response.data.accessToken;
+
+        // Check role
         if (user.role !== this.activeTab) {
           this.errorMessage = `You are not a ${this.activeTab}`;
           this.loading = false;
@@ -184,29 +191,49 @@ export default {
           return;
         }
 
-        localStorage.setItem("token", user.token);
-        if (user.role === "student") this.$router.push("/student-dashboard");
-        else if (user.role === "instructor") this.$router.push("/instructor-dashboard");
-        else this.$router.push("/admin-dashboard");
+        // Store data in localStorage
+        localStorage.setItem("accessToken", token);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("userEmail", user.email);
+
+        // Redirect using named routes
+        if (user.role === "student") this.$router.push({ name: "StudentDashboard" });
+        else if (user.role === "instructor") this.$router.push({ name: "InstructorDashboard" });
+        else this.$router.push({ name: "AdminDashboard" });
 
       } catch (err) {
         const msg = err.response?.data?.message || "Invalid credentials, please try again.";
         this.errorMessage = msg;
 
         if (msg.toLowerCase().includes("verify")) {
-          this.showResend = true;
-        }
+          
+          localStorage.setItem("userEmail", this.email);
 
+          this.$router.push({ 
+            name: "VerifyEmail",
+            query: { email: this.email } 
+          });
+          return;
+        }
+      
         this.$nextTick(() => this.animateError());
       } finally {
         this.loading = false;
       }
     },
 
+    // ============ RESEND VERIFICATION ============
     async resendVerification() {
+      const email = this.email || localStorage.getItem("userEmail") || this.$route.query.email;
+
+      if (!email) {
+        this.errorMessage = "Email not found to resend verification.";
+        return;
+      }
+
       this.loading = true;
       try {
-        await resendVerification(this.email);
+        await resendVerification(email);
         this.errorMessage = "Verification email resent! Please check your inbox.";
         this.showResend = false;
       } catch (err) {
