@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-8">
+  <div class="min-h-screen  p-8">
     <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl p-8">
       <h1 class="text-3xl font-semibold text-gray-800 mb-8">
         Manage Courses
@@ -15,13 +15,13 @@
               v-model="form.title"
               type="text"
               placeholder="Course title"
-              class="border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="border-2 border-black p-3 text-black rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
             <input
               v-model="form.category"
               type="text"
               placeholder="Category"
-              class="border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
@@ -30,7 +30,7 @@
               v-model="form.description"
               rows="3"
               placeholder="Course description"
-              class="w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="w-full border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             ></textarea>
           </div>
 
@@ -39,13 +39,13 @@
               v-model="form.price"
               type="number"
               placeholder="Price"
-              class="border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
             <input
               v-model="form.instructorId"
               type="text"
               placeholder="Instructor ID"
-              class="border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
@@ -54,7 +54,7 @@
               type="file"
               @change="handleFileUpload"
               accept="image/*"
-              class="border p-2 w-full rounded-lg"
+              class="border-2 border-black text-black p-2 w-full rounded-lg"
             />
             <div v-if="previewImage" class="mt-3">
               <img
@@ -81,7 +81,7 @@
       <div>
         <h2 class="text-xl font-medium mb-4 text-gray-700">All Courses</h2>
 
-        <div v-if="courses.length === 0" class="text-gray-500 text-center py-10">
+        <div v-if="courses.length === 0" class="text-black text-center py-10">
           No courses available.
         </div>
 
@@ -100,7 +100,7 @@
             <tr
               v-for="course in courses"
               :key="course._id"
-              class="hover:bg-gray-50"
+              class="hover:bg-gray-50 text-black"
             >
               <td class="py-3 px-4 border-b">{{ course.title }}</td>
               <td class="py-3 px-4 border-b">{{ course.category }}</td>

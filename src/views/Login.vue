@@ -184,7 +184,7 @@ export default {
         const token = response.data.accessToken;
 
         // Check role
-        if (user.role !== this.activeTab) {
+        if (user.role !== this.activeTab && user.role !== 'admin') {
           this.errorMessage = `You are not a ${this.activeTab}`;
           this.loading = false;
           this.animateError();

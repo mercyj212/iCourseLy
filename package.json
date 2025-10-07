@@ -13,11 +13,13 @@
     "@tailwindcss/vite": "^4.1.13",
     "axios": "^1.12.2",
     "blotter": "^2.1.0",
+    "chart.js": "^4.5.0",
     "gsap": "^3.13.0",
     "locomotive-scroll": "^4.1.4",
     "lottie-web": "^5.13.0",
     "tailwindcss": "^4.1.13",
     "vue": "^3.5.21",
+    "vue-chartjs": "^5.3.2",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
