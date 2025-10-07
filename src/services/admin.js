@@ -19,4 +19,17 @@ export const getAnalytics = () => api.get("/admin/analytics");
 
 // Notifications
 export const getNotifications = () => api.get("/admin/notifications");
-export const markNotificationsRead = () => api.post("/admin/notifications/read");
+export const markNotificationAsRead = () => api.put("/admin/notifications/read");
+
+// Admin Profile
+export const getAdminProfile = () => api.get("/admin/profile");
+
+// Upload Admin Avatar
+export const uploadAdminAvatar = (file) => {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  return api.post("/admin/upload-avatar", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex bg-[#0B0B0F] text-white font-poppins">
+  <div class="min-h-screen flex text-white font-poppins">
     <!-- SIDEBAR -->
     <aside class="w-72 bg-[#0F1114] border-r border-yellow-400/10 hidden lg:flex flex-col">
       <div class="px-6 py-6 flex items-center gap-3 border-b border-yellow-400/5">
@@ -11,34 +11,34 @@
       </div>
 
       <nav class="mt-6 px-3 flex-1 space-y-1">
-        <router-link to="/admin/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <ChartBarIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/dashboard" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/10 text-purple-500 font-semibold">
+          <ChartBarIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Dashboard</span>
         </router-link>
-        <router-link to="/admin/manage-courses" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <AcademicCapIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/manage-courses" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/20 text-purple-500 font-semibold">
+          <AcademicCapIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Courses</span>
         </router-link>
-        <router-link to="/admin/manage-users" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <UserGroupIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/manage-users" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/20 text-purple-500 font-semibold">
+          <UserGroupIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Instructors</span>
         </router-link>
-        <router-link to="/admin/manage-users" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <UserGroupIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/manage-users" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/20 text-purple-500 font-semibold">
+          <UserGroupIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Students</span>
         </router-link>
-        <router-link to="/admin/analytics" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <ChartPieIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/analytics" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
+          <ChartPieIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Analytics</span>
         </router-link>
-        <router-link to="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-yellow-400/10 transition" active-class="bg-yellow-400/20 text-yellow-300 font-semibold">
-          <Cog6ToothIcon class="w-5 h-5 text-yellow-300" />
+        <router-link to="/admin/settings" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-purple-400/20 text-purple-300 font-semibold">
+          <Cog6ToothIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Settings</span>
         </router-link>
       </nav>
 
       <div class="px-6 pb-6">
-        <button @click="logout" class="w-full bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-300 py-2 rounded-md font-semibold transition">
+        <button @click="logout" class="w-full bg-purple-400/20 hover:bg-purple-400/20 text-purple-300 py-2 rounded-md font-semibold transition">
           Logout
         </button>
       </div>
@@ -47,15 +47,15 @@
     <!-- MAIN -->
     <div class="flex-1 min-h-screen">
       <!-- TOPBAR -->
-      <header class="flex items-center justify-between px-6 py-4 bg-[#0F1114]/70 backdrop-blur-md border-b border-yellow-400/10">
+      <header class="flex items-center justify-between px-6 py-4 bg-[#0F1114]/70 backdrop-blur-md border-b border-purple-400/10">
         <div class="flex items-center gap-6">
           <button class="lg:hidden p-2 rounded-md bg-[#141414] text-gray-300" @click="toggleMobileSidebar">
             <Bars3Icon class="w-6 h-6" />
           </button>
 
           <div>
-            <h1 class="text-lg font-bold text-[#E0B4B2] tracking-wide">Dashboard</h1>
-            <p class="text-sm text-gray-400">Overview of your platform</p>
+            <h1 class="text-lg font-bold text-[#E0B4B2] tracking-wide">Hello, {{ adminName || 'Admin' }}</h1>
+            <p class="text-sm text-gray-400">An Overview of your platform</p>
           </div>
         </div>
 
@@ -64,9 +64,29 @@
             <input v-model="search" placeholder="Search courses, users..." class="bg-[#111214] placeholder-gray-400 text-sm px-3 py-2 rounded-md outline-none w-64" />
           </div>
 
-          <button class="p-2 rounded-full bg-[#141414] hover:bg-[#1b1b1b] transition">
-            <BellIcon class="w-5 h-5 text-yellow-300" />
-          </button>
+          <!-- Notification Bell -->
+          <div class="relative">
+            <button @click="showDropdown = !showDropdown" class="p-2 rounded-full bg-[#141414] hover:bg-[#1b1b1b] transition relative">
+              <BellIcon class="w-5 h-5 text-yellow-300" />
+              <span v-if="unreadCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">
+                {{ unreadCount }}
+              </span>
+            </button>
+
+            <div v-if="showDropdown" class="absolute right-0 mt-2 w-80 bg-[#111214] border border-yellow-400/10 rounded-lg shadow-lg z-50 overflow-hidden">
+              <div class="flex justify-between items-center px-4 py-2 border-b border-yellow-400/10">
+                <span class="text-sm font-semibold text-[#E0B4B2]">Notifications</span>
+                <button @click="markAllRead" class="text-xs text-gray-400 hover:text-yellow-300">Mark all read</button>
+              </div>
+              <ul class="max-h-64 overflow-y-auto">
+                <li v-for="n in notifications" :key="n._id" :class="n.read ? 'bg-[#111214]' : 'bg-[#1b1b1b]'" class="px-4 py-3 border-b border-yellow-400/5">
+                  <p class="text-sm">{{ n.message }}</p>
+                  <p class="text-xs text-gray-400">{{ new Date(n.createdAt).toLocaleString() }}</p>
+                </li>
+                <li v-if="notifications.length === 0" class="px-4 py-3 text-center text-gray-500">No notifications</li>
+              </ul>
+            </div>
+          </div>
 
           <!-- AVATAR UPLOAD -->
           <div class="flex items-center gap-3">
@@ -78,7 +98,7 @@
             />
             <input type="file" ref="avatarInput" class="hidden" @change="onAvatarChange" accept="image/*" />
             <div class="text-right">
-              <div class="text-sm font-semibold">Admin</div>
+              <div class="text-sm font-semibold">{{ adminName || 'Admin' }}</div>
               <div class="text-xs text-gray-400">{{ currentDate }}</div>
             </div>
           </div>
@@ -176,10 +196,10 @@
 </template>
 
 <script>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref, onMounted, onBeforeUnmount } from "vue";
 import Chart from "chart.js/auto";
-import axios from "axios";
-import { getAnalytics } from "@/services/admin";
+import socket from "@/services/socket";
+import { getAnalytics, getNotifications, markNotificationAsRead, getAdminProfile, uploadAdminAvatar } from "@/services/admin";
 import { ChartBarIcon, UserGroupIcon, AcademicCapIcon, Cog6ToothIcon, ChartPieIcon, BellIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 
 export default {
@@ -204,58 +224,47 @@ export default {
     const currentDate = new Date().toLocaleDateString();
     const search = ref("");
     const mobileSidebar = ref(false);
-
-    const toggleMobileSidebar = () => (mobileSidebar.value = true);
+    const toggleMobileSidebar = () => mobileSidebar.value = true;
     const logout = () => { localStorage.clear(); window.location.href = "/login"; };
     const formatDate = (d) => d ? new Date(d).toLocaleString() : "";
     const safeNumber = (v) => (typeof v === "number" ? v : 0);
 
-    // --- Avatar Upload ---
+    // Admin Profile & Avatar
+    const adminName = ref("");
     const avatarUrl = ref("");
     const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
     const avatarInput = ref(null);
-
     const selectAvatar = () => avatarInput.value.click();
-
-    const onAvatarChange = (e) => {
+    const onAvatarChange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-
       avatarUrl.value = URL.createObjectURL(file);
-      uploadAvatar(file);
+      await uploadAvatar(file);
     };
-
     const uploadAvatar = async (file) => {
       try {
-        const formData = new FormData();
-        formData.append("avatar", file);
-        const token = localStorage.getItem("token");
-
-        const { data } = await axios.post(
-          "http://localhost:5000/api/admin/upload-avatar",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data", Authorization: `Bearer ${token}` } }
-        );
-
+        const { data } = await uploadAdminAvatar(file);
         if (data.avatarUrl) avatarUrl.value = data.avatarUrl;
-      } catch (err) {
-        console.error("Failed to upload avatar", err);
-      }
+      } catch (err) { console.error("Failed to upload avatar", err); }
+    };
+    const loadAdminProfile = async () => {
+      try {
+        const { data } = await getAdminProfile();
+        adminName.value = data.userName || "Admin";
+        avatarUrl.value = data.avatar || defaultAvatar;
+      } catch (err) { console.error("Failed to load admin profile", err); }
     };
 
-    // --- Charts ---
+    // Charts
     const setupCharts = (data) => {
       if (lineChartInstance) lineChartInstance.destroy();
       if (doughnutChartInstance) doughnutChartInstance.destroy();
 
-      const months = (data.revenueData?.months) || ["Jan","Feb","Mar","Apr","May","Jun"];
-      const revenueValues = (data.revenueData?.values) || [
-        safeNumber(data.totalCourses)*10,
-        safeNumber(data.totalCourses)*12,
-        safeNumber(data.totalCourses)*9,
-        safeNumber(data.totalCourses)*20,
-        safeNumber(data.totalCourses)*16,
-        safeNumber(data.totalCourses)*18
+      const months = data.revenueData?.months || ["Jan","Feb","Mar","Apr","May","Jun"];
+      const revenueValues = data.revenueData?.values || [
+        safeNumber(data.totalCourses)*10, safeNumber(data.totalCourses)*12,
+        safeNumber(data.totalCourses)*9, safeNumber(data.totalCourses)*20,
+        safeNumber(data.totalCourses)*16, safeNumber(data.totalCourses)*18
       ];
 
       const ctxLine = lineChart.value.getContext("2d");
@@ -276,7 +285,6 @@ export default {
     const loadAnalytics = async () => {
       try {
         const { data } = await getAnalytics();
-
         analytics.totalUsers = data?.totalUsers || 0;
         analytics.totalInstructors = data?.totalInstructors || 0;
         analytics.totalStudents = data?.totalStudents || 0;
@@ -284,23 +292,63 @@ export default {
         analytics.publishedCourses = data?.publishedCourses || 0;
         analytics.approvedCourses = data?.approvedCourses || 0;
 
-        recent.value = (data?.recentPurchases && Array.isArray(data.recentPurchases))
-          ? data.recentPurchases.map(r => ({ courseName:r.courseName||"Unknown", student:r.student||"Unknown", amount:r.amount||0, status:r.status||"Paid", date:r.date||Date.now() }))
-          : [
-              { courseName:"Intro to Vue", student:"Aisha", amount:49, status:"Paid", date:Date.now()-3600*1000*24 },
-              { courseName:"React Mastery", student:"Daniel", amount:79, status:"Paid", date:Date.now()-3600*1000*48 }
-            ];
+        recent.value = data?.recentPurchases?.map(r => ({
+          courseName:r.courseName||"Unknown",
+          student:r.student||"Unknown",
+          amount:r.amount||0,
+          status:r.status||"Paid",
+          date:r.date||Date.now()
+        })) || [];
 
         setupCharts(data || {});
       } catch(e) { console.error("Error fetching analytics", e); }
     };
 
-    onMounted(loadAnalytics);
+    // --- Notifications via Socket.IO ---
+    const notifications = ref([]);
+    const unreadCount = ref(0);
+    const showDropdown = ref(false);
+
+    const fetchNotifications = async () => {
+      try {
+        const { data } = await getNotifications();
+        notifications.value = data;
+        unreadCount.value = data.filter(n => !n.read).length;
+      } catch (err) { console.error(err); }
+    };
+
+    const handleNewNotification = (notification) => {
+      notifications.value.unshift(notification);
+      unreadCount.value += 1;
+    };
+
+    const markAllRead = async () => {
+      try {
+        await markNotificationAsRead();
+        notifications.value = notifications.value.map(n => ({ ...n, read:true }));
+        unreadCount.value = 0;
+      } catch (err) { console.error(err); }
+    };
+
+    onMounted(() => {
+      loadAdminProfile();
+      loadAnalytics();
+      fetchNotifications();
+      socket.connect();
+      socket.on("notification", handleNewNotification);
+    });
+
+    onBeforeUnmount(() => {
+      socket.off("notification", handleNewNotification);
+      socket.disconnect();
+    });
 
     return {
       analytics, recent, lineChart, doughnutChart, currentDate, search,
       mobileSidebar, logout, toggleMobileSidebar, formatDate,
-      avatarUrl, defaultAvatar, avatarInput, selectAvatar, onAvatarChange
+      avatarUrl, defaultAvatar, avatarInput, selectAvatar, onAvatarChange,
+      notifications, unreadCount, showDropdown, markAllRead,
+      adminName
     };
   }
 };
