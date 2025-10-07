@@ -97,10 +97,10 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
 import gsap from "gsap";
-import { register } from "../services/auth";
-import LottieAnimation from "../components/LottieAnimation.vue";
+import { register } from "@/services/auth";
+import LottieAnimation from "@/components/LottieAnimation.vue";
 
 export default {
   name: "RegisterView",

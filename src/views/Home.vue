@@ -58,8 +58,8 @@
 <script>
 import { ref, onMounted, nextTick } from "vue";
 import gsap from "gsap";
-import Sidebar from "../components/Sidebar.vue";
-import Navbar from "../components/Navbar.vue";
+import Sidebar from "@/components/Sidebar.vue";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
   name: "Home",

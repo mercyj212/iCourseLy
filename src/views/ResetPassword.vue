@@ -138,8 +138,8 @@
 <script>
 import { ref, onMounted, onBeforeUnmount } from "vue"
 import { useRoute } from "vue-router"
-import { resetPassword } from "../services/auth"
-import LottieAnimation from "../components/LottieAnimation.vue"
+import { resetPassword } from "@/services/auth"
+import LottieAnimation from "@/components/LottieAnimation.vue"
 
 export default {
   name: "ResetPassword",

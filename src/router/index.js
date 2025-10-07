@@ -1,34 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 // Public
-import Home from '../views/Home.vue';
-import Login from '../views/Login.vue';
-import Register from '../views/Register.vue';
-import VerifyEmail from '../views/VerifyEmail.vue';
-import ForgotPassword from '../views/ForgotPassword.vue';
-import ResetPassword from '../views/ResetPassword.vue';
+import Home from '@/views/Home.vue';
+import Login from '@/views/Login.vue';
+import Register from '@/views/Register.vue';
+import VerifyEmail from '@/views/VerifyEmail.vue';
+import ForgotPassword from '@/views/ForgotPassword.vue';
+import ResetPassword from '@/views/ResetPassword.vue';
 
 // Student
-import StudentDashboard from '../views/student/StudentDashboard.vue';
-import BrowseCourses from '../views/student/BrowseCourses.vue';
-import CourseDetails from '../views/student/CourseDetails.vue';
-import MyCourses from '../views/student/MyCourses.vue';
-import StudentProfile from '../views/student/StudentProfile.vue';
+import StudentDashboard from '@/views/student/StudentDashboard.vue';
+import BrowseCourses from '@/views/student/BrowseCourses.vue';
+import CourseDetails from '@/views/student/CourseDetails.vue';
+import MyCourses from '@/views/student/MyCourses.vue';
+import StudentProfile from '@/views/student/StudentProfile.vue';
 
 // Instructor
-import InstructorDashboard from '../views/instructor/InstructorDashboard.vue';
-import CreateCourse from '../views/instructor/CreateCourse.vue';
-import UploadLesson from '../views/instructor/UploadLesson.vue';
-import InstructorCourses from '../views/instructor/InstructorCourses.vue';
-import InstructorProfile from '../views/instructor/InstructorProfile.vue';
+import InstructorDashboard from '@/views/instructor/InstructorDashboard.vue';
+import CreateCourse from '@/views/instructor/CreateCourse.vue';
+import UploadLesson from '@/views/instructor/UploadLesson.vue';
+import InstructorCourses from '@/views/instructor/InstructorCourses.vue';
+import InstructorProfile from '@/views/instructor/InstructorProfile.vue';
 
 // Admin
-import AdminDashboard from '../views/admin/AdminDashboard.vue';
-import ManageUsers from '../views/admin/ManageUsers.vue';
-import ManageCourses from '../views/admin/ManageCourses.vue';
+import AdminDashboard from '@/views/admin/AdminDashboard.vue';
+import ManageUsers from '@/views/admin/ManageUsers.vue';
+import ManageCourses from '@/views/admin/ManageCourses.vue';
 
 // Not found
-import NotFound from '../views/NotFound.vue';
+import NotFound from '@/views/NotFound.vue';
 
 const routes = [
   // Public

@@ -7,3 +7,10 @@ export const getAllCoursesAdmin = () => api.get("/admin/courses");
 export const deleteCourseAdmin = (id) => api.delete(`/admin/courses/${id}`);
 export const approveCourse = (id) => api.put(`/admin/courses/${id}/approve`);
 export const getAnalytics = () => api.get("/admin/analytics");
+export const createCourseAdmin = (data) =>
+  api.post("/admin/courses", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+

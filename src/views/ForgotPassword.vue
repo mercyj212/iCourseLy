@@ -88,9 +88,9 @@
 
 <script>
 import { ref, onMounted, onBeforeUnmount } from "vue"
-import LottieAnimation from "../components/LottieAnimation.vue"
-import { forgotPassword } from "../services/auth"
-import Navbar from "../components/Navbar.vue"
+import LottieAnimation from "@/components/LottieAnimation.vue"
+import { forgotPassword } from "@/services/auth"
+import Navbar from "@/components/Navbar.vue"
 
 export default {
   name: "ForgotPassword",

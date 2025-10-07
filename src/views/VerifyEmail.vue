@@ -88,8 +88,8 @@
 
 <script>
 import { verifyEmail, resendVerification } from "../services/auth";
-import LottieAnimation from "../components/LottieAnimation.vue";
-import Navbar from "../components/Navbar.vue";
+import LottieAnimation from "@/components/LottieAnimation.vue";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
   name: "VerifyEmail",

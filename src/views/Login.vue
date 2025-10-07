@@ -130,9 +130,9 @@
 </template>
 
 <script>
-import Navbar from "../components/Navbar.vue";
+import Navbar from "@/components/Navbar.vue";
 import gsap from "gsap";
-import { login, resendVerification } from "../services/auth";
+import { login, resendVerification } from "@/services/auth";
 
 export default {
   name: "LoginView",

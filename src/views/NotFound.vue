@@ -36,7 +36,7 @@
 
 <script>
 import { ref, onMounted, onBeforeUnmount } from "vue"
-import LottieAnimation from "../components/LottieAnimation.vue"
+import LottieAnimation from "@/components/LottieAnimation.vue"
 
 export default {
   name: "NotFound",
