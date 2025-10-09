@@ -23,7 +23,7 @@
           <UserGroupIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Instructors</span>
         </router-link>
-        <router-link to="/admin/manage-users" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/20 text-purple-500 font-semibold">
+        <router-link to="/admin/manage-students" class="flex items-center gap-3 px-4 py-3 rounded-md text-gray-300 hover:bg-purple-400/20 transition" active-class="bg-white/20 text-purple-500 font-semibold">
           <UserGroupIcon class="w-5 h-5 text-[#E0B4B2]" />
           <span>Students</span>
         </router-link>

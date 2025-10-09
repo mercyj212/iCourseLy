@@ -26,6 +26,9 @@ import InstructorProfile from '@/views/instructor/InstructorProfile.vue';
 import AdminDashboard from '@/views/admin/AdminDashboard.vue';
 import ManageInstructors from '@/views/admin/ManageInstructors.vue';
 import ManageCourses from '@/views/admin/ManageCourses.vue';
+import ManageStudents from '../views/admin/ManageStudents.vue';
+import AdminAnalytics from '@/views/admin/AdminAnalytics.vue';
+import AdminSettings from '@/views/admin/AdminSettings.vue';
 
 // Not found
 import NotFound from '@/views/NotFound.vue';
@@ -59,6 +62,9 @@ const routes = [
   { path: '/admin/dashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true, role: "admin"} },
   { path: '/admin/manage-instructors', name: 'ManageInstructors', component: ManageInstructors, meta: { requiresAuth: true, role: "admin"} },
   { path: '/admin/manage-courses', name: 'ManageCourses', component: ManageCourses, meta: { requiresAuth: true, role: "admin"} },
+  { path: '/admin/manage-students', name: 'ManageStudents', component: ManageStudents, meta: { requiresAuth: true, role: "admin"} },
+  { path: '/admin/analytics', name: 'AdminAnalytics', component: AdminAnalytics, meta: { requiresAuth: true, role: "admin"} },
+  { path: '/admin/settings', name: 'AdminSettings', component: AdminSettings, meta: { requiresAuth: true, role: "admin"} },
 
   // Catch-all
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, },

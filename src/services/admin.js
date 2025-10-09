@@ -2,6 +2,8 @@ import api from "./api";
 
 // Users
 export const getAllUsers = () => api.get("/admin/users");
+export const getAllInstructors = () => api.get("/admin/instructors");
+export const addInstructors = (data) => api.post("/admin/instructors", data);
 export const updateUserRole = (id, role) => api.put(`/admin/users/${id}/role`, { role });
 export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
 
@@ -23,6 +25,8 @@ export const markNotificationAsRead = () => api.put("/admin/notifications/read")
 
 // Admin Profile
 export const getAdminProfile = () => api.get("/admin/profile");
+export const updateAdminProfile = (data) => api.put("/admin/profile", data);
+export const changeAdminPassword = (data) => api.put("/admin/change-password", data);
 
 // Upload Admin Avatar
 export const uploadAdminAvatar = (file) => {
