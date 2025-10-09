@@ -1,235 +1,263 @@
 <template>
-  <div class="min-h-screen  p-8">
-    <div class="max-w-5xl mx-auto bg-white shadow-xl rounded-2xl p-8">
-      <h1 class="text-3xl font-semibold text-gray-800 mb-8">
-        Manage Courses
-      </h1>
+  <div class="min-h-screen p-6 lg:p-8 bg-[#0F1114] text-white font-poppins">
+    <!-- ===== TOP BAR ===== -->
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
+      <h1 class="text-2xl font-bold text-[#E0B4B2]">Manage Courses</h1>
 
-      <!-- ========== Create New Course Form ========== -->
-      <div class="border-b border-gray-200 pb-6 mb-8">
-        <h2 class="text-xl font-medium mb-4 text-gray-700">Create New Course</h2>
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto">
+        <input
+          v-model="search"
+          placeholder="Search by course name, instructor, category..."
+          class="bg-[#111214] placeholder-gray-400 text-sm px-4 py-2 rounded-md outline-none w-full sm:w-64"
+        />
+
+        <select v-model="filterStatus" class="bg-[#111214] px-3 py-2 rounded-md text-sm">
+          <option value="">All Status</option>
+          <option value="published">Published</option>
+          <option value="draft">Draft</option>
+        </select>
+
+        <select v-model="filterCategory" class="bg-[#111214] px-3 py-2 rounded-md text-sm">
+          <option value="">All Categories</option>
+          <option v-for="c in categories" :key="c" :value="c">{{ c }}</option>
+        </select>
+
+        <button @click="showModal = true"
+          class="bg-yellow-500 hover:bg-yellow-600 text-[#0F1114] font-semibold px-4 py-2 rounded-md transition">
+          Add Course
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== COURSES TABLE ===== -->
+    <div class="overflow-x-auto rounded-2xl shadow border border-yellow-400/10 bg-[#111214] mb-8">
+      <table class="min-w-full text-left text-sm divide-y divide-yellow-400/10">
+        <thead class="bg-[#111214] text-gray-400">
+          <tr>
+            <th class="px-4 py-3">Course</th>
+            <th class="px-4 py-3">Instructor</th>
+            <th class="px-4 py-3">Students</th>
+            <th class="px-4 py-3">Status</th>
+            <th class="px-4 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-yellow-400/10">
+          <tr v-for="course in filteredCourses" :key="course._id" class="hover:bg-[#151515] transition">
+            <td class="px-4 py-3 flex items-center gap-3">
+              <img :src="course.coverImage?.url || defaultCover" alt="cover" class="w-12 h-12 rounded-md object-cover" />
+              <span>{{ course.title }}</span>
+            </td>
+            <td class="px-4 py-3">{{ course.instructorName }}</td>
+            <td class="px-4 py-3">{{ course.studentsEnrolled }}</td>
+            <td class="px-4 py-3">
+              <span
+                :class="{
+                  'bg-green-500/20 text-green-400': course.status === 'published',
+                  'bg-yellow-500/20 text-yellow-400': course.status === 'draft',
+                }"
+                class="px-3 py-1 rounded-full text-xs font-semibold"
+              >
+                {{ course.status }}
+              </span>
+            </td>
+            <td class="px-4 py-3 flex gap-2">
+              <button @click="editCourse(course)" class="text-purple-500 hover:text-purple-400 transition">Edit</button>
+              <button @click="deleteCourse(course)" class="text-red-500 hover:text-red-400 transition">Delete</button>
+            </td>
+          </tr>
+          <tr v-if="filteredCourses.length === 0">
+            <td colspan="5" class="py-6 text-center text-gray-500">No courses found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ===== COURSES CARD VIEW ===== -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-for="course in filteredCourses" :key="course._id"
+        class="bg-[#111214] rounded-2xl p-4 shadow border border-yellow-400/10 hover:-translate-y-1 transition transform">
+        <img :src="course.coverImage?.url || defaultCover" alt="cover" class="w-full h-36 object-cover rounded-md mb-3" />
+        <h3 class="font-bold text-lg text-[#E0B4B2]">{{ course.title }}</h3>
+        <p class="text-gray-400 text-sm mb-2">{{ course.instructorName }}</p>
+        <p class="text-gray-400 text-xs mb-2">Students: {{ course.studentsEnrolled }}</p>
+        <span
+          :class="{
+            'bg-green-500/20 text-green-400': course.status === 'published',
+            'bg-yellow-500/20 text-yellow-400': course.status === 'draft',
+          }"
+          class="px-3 py-1 rounded-full text-xs font-semibold mb-2 inline-block"
+        >
+          {{ course.status }}
+        </span>
+        <div class="flex justify-between mt-3">
+          <button @click="editCourse(course)" class="text-purple-500 hover:text-purple-400 transition text-sm">Edit</button>
+          <button @click="deleteCourse(course)" class="text-red-500 hover:text-red-400 transition text-sm">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ADD COURSE MODAL ===== -->
+    <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+      <div class="bg-[#111214] rounded-2xl p-6 w-full max-w-lg relative">
+        <button @click="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-white">&times;</button>
+        <h2 class="text-xl font-bold text-[#E0B4B2] mb-4">Create New Course</h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
+          <input
+            v-model="form.title"
+            type="text"
+            placeholder="Course title"
+            class="w-full p-3 rounded-lg bg-[#0F1114] border border-yellow-400 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
+          />
+          <textarea
+            v-model="form.description"
+            rows="3"
+            placeholder="Course description"
+            class="w-full p-3 rounded-lg bg-[#0F1114] border border-yellow-400 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
+          ></textarea>
           <div class="grid grid-cols-2 gap-4">
-            <input
-              v-model="form.title"
-              type="text"
-              placeholder="Course title"
-              class="border-2 border-black p-3 text-black rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            />
             <input
               v-model="form.category"
               type="text"
               placeholder="Category"
-              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="p-3 rounded-lg bg-[#0F1114] border border-yellow-400 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
             />
-          </div>
-
-          <div>
-            <textarea
-              v-model="form.description"
-              rows="3"
-              placeholder="Course description"
-              class="w-full border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            ></textarea>
-          </div>
-
-          <div class="grid grid-cols-2 gap-4">
             <input
               v-model="form.price"
               type="number"
               placeholder="Price"
-              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-            <input
-              v-model="form.instructorId"
-              type="text"
-              placeholder="Instructor ID"
-              class="border-2 border-black text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              class="p-3 rounded-lg bg-[#0F1114] border border-yellow-400 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
             />
           </div>
-
-          <div>
-            <input
-              type="file"
-              @change="handleFileUpload"
-              accept="image/*"
-              class="border-2 border-black text-black p-2 w-full rounded-lg"
-            />
-            <div v-if="previewImage" class="mt-3">
-              <img
-                :src="previewImage"
-                alt="Preview"
-                class="w-48 h-32 object-cover rounded-lg shadow"
-              />
-            </div>
+          <input
+            v-model="form.instructorId"
+            type="text"
+            placeholder="Instructor ID"
+            class="w-full p-3 rounded-lg bg-[#0F1114] border border-yellow-400 text-white focus:ring-2 focus:ring-yellow-500 outline-none"
+          />
+          <input type="file" @change="handleFileUpload" accept="image/*" class="w-full p-2 rounded-lg bg-[#0F1114] border border-yellow-400 text-white" />
+          <div v-if="previewImage" class="mt-2">
+            <img :src="previewImage" class="w-48 h-32 object-cover rounded-lg" />
           </div>
 
-          <button
-            type="submit"
-            class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition w-full md:w-auto"
-            :disabled="loading"
-          >
+          <button type="submit"
+            class="bg-yellow-500 hover:bg-yellow-600 text-[#0F1114] font-semibold px-6 py-2 rounded-md w-full mt-3">
             {{ loading ? "Creating..." : "Create Course" }}
           </button>
-
-          <p v-if="message" class="text-green-600 mt-2 text-sm">{{ message }}</p>
         </form>
-      </div>
-
-      <!-- ========== Existing Courses Table ========== -->
-      <div>
-        <h2 class="text-xl font-medium mb-4 text-gray-700">All Courses</h2>
-
-        <div v-if="courses.length === 0" class="text-black text-center py-10">
-          No courses available.
-        </div>
-
-        <table v-else class="w-full border-collapse text-sm">
-          <thead>
-            <tr class="bg-gray-100 text-gray-700 text-left">
-              <th class="py-3 px-4 border-b">Title</th>
-              <th class="py-3 px-4 border-b">Category</th>
-              <th class="py-3 px-4 border-b">Price</th>
-              <th class="py-3 px-4 border-b">Instructor</th>
-              <th class="py-3 px-4 border-b text-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <tr
-              v-for="course in courses"
-              :key="course._id"
-              class="hover:bg-gray-50 text-black"
-            >
-              <td class="py-3 px-4 border-b">{{ course.title }}</td>
-              <td class="py-3 px-4 border-b">{{ course.category }}</td>
-              <td class="py-3 px-4 border-b">${{ course.price }}</td>
-              <td class="py-3 px-4 border-b">
-                {{ course.instructorId?.userName || "Unknown" }}
-              </td>
-              <td class="py-3 px-4 border-b text-center space-x-3">
-                <button
-                  @click="approve(course._id)"
-                  class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                >
-                  Approve
-                </button>
-                <button
-                  @click="remove(course._id)"
-                  class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
-import {
-  getAllCoursesAdmin,
-  approveCourse,
-  deleteCourseAdmin,
-  createCourseAdmin,
-} from "@/services/admin";
+<script>
+import { ref, computed, onMounted } from "vue";
+import { getAllCoursesAdmin, deleteCourseAdmin, createCourseAdmin } from "@/services/admin";
 
-const courses = ref([]);
-const loading = ref(false);
-const message = ref("");
-const form = ref({
-  title: "",
-  description: "",
-  category: "",
-  price: "",
-  instructorId: "",
-});
-const coverImage = ref(null);
-const previewImage = ref(null);
+export default {
+  name: "CoursesPage",
+  setup() {
+    const courses = ref([]);
+    const search = ref("");
+    const filterStatus = ref("");
+    const filterCategory = ref("");
+    const showModal = ref(false);
+    const loading = ref(false);
+    const previewImage = ref(null);
+    const defaultCover = "https://cdn-icons-png.flaticon.com/512/847/847969.png";
 
-// fetch all courses
-const fetchCourses = async () => {
-  try {
-    const { data } = await getAllCoursesAdmin();
-    courses.value = data;
-  } catch (err) {
-    console.error(err);
-  }
-};
+    const categories = ["Development", "Design", "Marketing", "Business", "Photography"];
 
-// approve course
-const approve = async (id) => {
-  try {
-    await approveCourse(id);
-    message.value = "Course approved successfully!";
-    fetchCourses();
-  } catch (err) {
-    alert("Failed to approve course");
-  }
-};
-
-// delete course
-const remove = async (id) => {
-  if (!confirm("Are you sure you want to delete this course?")) return;
-  try {
-    await deleteCourseAdmin(id);
-    message.value = "Course deleted!";
-    fetchCourses();
-  } catch (err) {
-    alert("Failed to delete course");
-  }
-};
-
-// handle file upload
-const handleFileUpload = (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    coverImage.value = file;
-    previewImage.value = URL.createObjectURL(file);
-  }
-};
-
-// submit create form
-const handleSubmit = async () => {
-  if (
-    !form.value.title ||
-    !form.value.description ||
-    !form.value.category ||
-    !form.value.price ||
-    !form.value.instructorId
-  ) {
-    alert("Please fill in all fields");
-    return;
-  }
-
-  try {
-    loading.value = true;
-    const formData = new FormData();
-    Object.entries(form.value).forEach(([key, value]) => {
-      formData.append(key, value);
+    const form = ref({
+      title: "",
+      description: "",
+      category: "",
+      price: "",
+      instructorId: "",
     });
-    if (coverImage.value) {
-      formData.append("coverImage", coverImage.value);
-    }
 
-    await createCourseAdmin(formData);
-    message.value = "Course created successfully!";
-    form.value = { title: "", description: "", category: "", price: "", instructorId: "" };
-    coverImage.value = null;
-    previewImage.value = null;
-    fetchCourses();
-  } catch (err) {
-    console.error(err);
-    alert(err.response?.data?.message || "Error creating course");
-  } finally {
-    loading.value = false;
+    const loadCourses = async () => {
+      try {
+        const { data } = await getAllCoursesAdmin();
+        courses.value = data.map(c => ({
+          ...c,
+          instructorName: c.instructorId?.userName || "Unknown",
+          studentsEnrolled: c.students?.length || 0,
+          status: c.isPublished ? "published" : "draft"
+        }));
+      } catch (err) {
+        console.error("Failed to load courses", err);
+      }
+    };
+
+    const deleteCourse = async (course) => {
+      if (!confirm(`Delete course "${course.title}"?`)) return;
+      try {
+        await deleteCourseAdmin(course._id);
+        courses.value = courses.value.filter(c => c._id !== course._id);
+      } catch (err) {
+        console.error("Failed to delete course", err);
+      }
+    };
+
+    const editCourse = (course) => {
+      console.log("Edit course", course);
+    };
+
+    const openAddCourseModal = () => { showModal.value = true; };
+    const closeModal = () => {
+      showModal.value = false;
+      form.value = { title: "", description: "", category: "", price: "", instructorId: "" };
+      previewImage.value = null;
+    };
+
+    const handleFileUpload = (e) => {
+      const file = e.target.files[0];
+      if (file) previewImage.value = URL.createObjectURL(file);
+    };
+
+    const handleSubmit = async () => {
+      if (!form.value.title || !form.value.description || !form.value.category || !form.value.price || !form.value.instructorId) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      try {
+        loading.value = true;
+        const formData = new FormData();
+        Object.entries(form.value).forEach(([k, v]) => formData.append(k, v));
+        if (previewImage.value) formData.append("coverImage", previewImage.value);
+        await createCourseAdmin(formData);
+        closeModal();
+        loadCourses();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to create course");
+      } finally {
+        loading.value = false;
+      }
+    };
+
+    const filteredCourses = computed(() => {
+      return courses.value.filter(c => {
+        const matchesSearch = c.title.toLowerCase().includes(search.value.toLowerCase());
+        const matchesStatus = filterStatus.value ? c.status === filterStatus.value : true;
+        const matchesCategory = filterCategory.value ? c.category === filterCategory.value : true;
+        return matchesSearch && matchesStatus && matchesCategory;
+      });
+    });
+
+    onMounted(loadCourses);
+
+    return {
+      courses, search, filterStatus, filterCategory, filteredCourses, categories, defaultCover,
+      deleteCourse, editCourse, showModal, openAddCourseModal, closeModal,
+      form, previewImage, handleFileUpload, handleSubmit, loading
+    };
   }
 };
-
-onMounted(fetchCourses);
 </script>
+
+<style scoped>
+.font-poppins { font-family: "Poppins", sans-serif; }
+</style>

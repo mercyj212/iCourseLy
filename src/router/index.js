@@ -24,11 +24,12 @@ import InstructorProfile from '@/views/instructor/InstructorProfile.vue';
 
 // Admin
 import AdminDashboard from '@/views/admin/AdminDashboard.vue';
-import ManageUsers from '@/views/admin/ManageUsers.vue';
+import ManageInstructors from '@/views/admin/ManageInstructors.vue';
 import ManageCourses from '@/views/admin/ManageCourses.vue';
 
 // Not found
 import NotFound from '@/views/NotFound.vue';
+// import ManageInstructors from '@/views/admin/ManageInstructors.vue';
 
 const routes = [
   // Public
@@ -56,7 +57,7 @@ const routes = [
 
   // Admin
   { path: '/admin/dashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/manage-users', name: 'ManageUsers', component: ManageUsers, meta: { requiresAuth: true, role: "admin"} },
+  { path: '/admin/manage-instructors', name: 'ManageInstructors', component: ManageInstructors, meta: { requiresAuth: true, role: "admin"} },
   { path: '/admin/manage-courses', name: 'ManageCourses', component: ManageCourses, meta: { requiresAuth: true, role: "admin"} },
 
   // Catch-all
