@@ -9,6 +9,7 @@ import ForgotPassword from '@/views/ForgotPassword.vue';
 import ResetPassword from '@/views/ResetPassword.vue';
 
 // Student
+import StudentLayout from '@/components/StudentLayout.vue';
 import StudentDashboard from '@/views/student/StudentDashboard.vue';
 import BrowseCourses from '@/views/student/BrowseCourses.vue';
 import CourseDetails from '@/views/student/CourseDetails.vue';
@@ -23,16 +24,16 @@ import InstructorCourses from '@/views/instructor/InstructorCourses.vue';
 import InstructorProfile from '@/views/instructor/InstructorProfile.vue';
 
 // Admin
+import AdminLayout from '@/components/AdminLayout.vue';
 import AdminDashboard from '@/views/admin/AdminDashboard.vue';
 import ManageInstructors from '@/views/admin/ManageInstructors.vue';
 import ManageCourses from '@/views/admin/ManageCourses.vue';
-import ManageStudents from '../views/admin/ManageStudents.vue';
+import ManageStudents from '@/views/admin/ManageStudents.vue';
 import AdminAnalytics from '@/views/admin/AdminAnalytics.vue';
 import AdminSettings from '@/views/admin/AdminSettings.vue';
 
 // Not found
 import NotFound from '@/views/NotFound.vue';
-// import ManageInstructors from '@/views/admin/ManageInstructors.vue';
 
 const routes = [
   // Public
@@ -42,40 +43,55 @@ const routes = [
   { path: '/verify-email', name: 'VerifyEmail', component: VerifyEmail },
   { path: '/verify-email/:token', name: 'VerifyEmailToken', component: VerifyEmail, props: true },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
-  { path: '/reset-password//:token', name: 'ResetPassword', component: ResetPassword },
+  { path: '/reset-password/:token', name: 'ResetPassword', component: ResetPassword },
 
   // Student
-  { path: '/student', name: 'StudentDashboard', component: StudentDashboard, meta: { requiresAuth: true, role: "student"} },
-  { path: '/student/courses', name: 'BrowseCourses', component: BrowseCourses, meta: { requiresAuth: true, role: "student"} },
-  { path: '/student/courses/:id', name: 'CourseDetails', component: CourseDetails, meta: { requiresAuth: true, role: "student"} },
-  { path: '/student/my-courses', name: 'MyCourses', component: MyCourses, meta: { requiresAuth: true, role: "student"} },
-  { path: '/student/profile', name: 'StudentProfile', component: StudentProfile, meta: { requiresAuth: true, role: "student"} },
+  { path: '/student',
+    name: 'StudentLayout', 
+    component: StudentLayout,
+    meta: { requiresAuth: true, role: 'student' }, 
+    children: [
+  { path: 'dashboard', name: 'StudentDashboard', component: StudentDashboard },
+  { path: 'courses', name: 'BrowseCourses', component: BrowseCourses },
+  { path: 'courses/:id', name: 'CourseDetails', component: CourseDetails, },
+  { path: 'my-courses', name: 'MyCourses', component: MyCourses },
+  { path: 'profile', name: 'StudentProfile', component: StudentProfile },
+  ],
+},
+
 
   // Instructor
-  { path: '/instructor/dashboard', name: 'InstructorDashboard', component: InstructorDashboard, meta: { requiresAuth: true, role: "instructor"} },
-  { path: '/instructor/create-course', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true, role: "instructor"} },
-  { path: '/instructor/upload-lesson', name: 'UploadLesson', component: UploadLesson, meta: { requiresAuth: true, role: "instructor"} },
-  { path: '/instructor/courses', name: 'InstructorCourses', component: InstructorCourses, meta: { requiresAuth: true, role: "instructor"} },
-  { path: '/instructor/profile', name: 'InstructorProfile', component: InstructorProfile, meta: { requiresAuth: true, role: "instructor"} },
+  { path: '/instructor/dashboard', name: 'InstructorDashboard', component: InstructorDashboard, meta: { requiresAuth: true, role: 'instructor' } },
+  { path: '/instructor/create-course', name: 'CreateCourse', component: CreateCourse, meta: { requiresAuth: true, role: 'instructor' } },
+  { path: '/instructor/upload-lesson', name: 'UploadLesson', component: UploadLesson, meta: { requiresAuth: true, role: 'instructor' } },
+  { path: '/instructor/courses', name: 'InstructorCourses', component: InstructorCourses, meta: { requiresAuth: true, role: 'instructor' } },
+  { path: '/instructor/profile', name: 'InstructorProfile', component: InstructorProfile, meta: { requiresAuth: true, role: 'instructor' } },
 
-  // Admin
-  { path: '/admin/dashboard', name: 'AdminDashboard', component: AdminDashboard, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/manage-instructors', name: 'ManageInstructors', component: ManageInstructors, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/manage-courses', name: 'ManageCourses', component: ManageCourses, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/manage-students', name: 'ManageStudents', component: ManageStudents, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/analytics', name: 'AdminAnalytics', component: AdminAnalytics, meta: { requiresAuth: true, role: "admin"} },
-  { path: '/admin/settings', name: 'AdminSettings', component: AdminSettings, meta: { requiresAuth: true, role: "admin"} },
+  // Admin (with layout)
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: { requiresAuth: true, role: 'admin' },
+    children: [
+      { path: 'dashboard', name: 'AdminDashboard', component: AdminDashboard },
+      { path: 'manage-instructors', name: 'ManageInstructors', component: ManageInstructors },
+      { path: 'manage-courses', name: 'ManageCourses', component: ManageCourses },
+      { path: 'manage-students', name: 'ManageStudents', component: ManageStudents },
+      { path: 'analytics', name: 'AdminAnalytics', component: AdminAnalytics },
+      { path: 'settings', name: 'AdminSettings', component: AdminSettings },
+    ],
+  },
 
   // Catch-all
-  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound, },
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
 ];
 
-const router = createRouter({ 
+const router = createRouter({
   history: createWebHistory(),
   routes,
 });
 
-// Auth guard
+// Auth Guard
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('accessToken');
   const role = localStorage.getItem('role');
