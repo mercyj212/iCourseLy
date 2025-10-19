@@ -1,101 +1,74 @@
 <template>
-  
-    <!-- Quick Stats -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      <div class="bg-[#1B1B1B] rounded-lg p-6 flex flex-col items-center">
-        <div class="text-3xl font-bold text-yellow-400">{{ totalCourses }}</div>
-        <div class="text-gray-400 mt-2">Total Courses</div>
-      </div>
-      <div class="bg-[#1B1B1B] rounded-lg p-6 flex flex-col items-center">
-        <div class="text-3xl font-bold text-green-400">{{ completedCourses }}</div>
-        <div class="text-gray-400 mt-2">Completed</div>
-      </div>
-      <div class="bg-[#1B1B1B] rounded-lg p-6 flex flex-col items-center">
-        <div class="text-3xl font-bold text-purple-400">{{ inProgressCourses }}</div>
-        <div class="text-gray-400 mt-2">In Progress</div>
-      </div>
-    </div>
+  <div class="min-h-screen bg-[#0B0B0F] text-white font-poppins">
 
-    <!-- Recent Courses -->
-    <section class="mt-8">
-      <h2 class="text-xl font-semibold text-[#E0B4B2] mb-4">Recent Courses</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          v-for="course in recentCourses"
-          :key="course.id"
-          class="bg-[#1B1B1B] rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
-        >
-          <img
-            :src="course.cover"
-            alt="Course Cover"
-            class="w-full h-32 object-cover rounded-md mb-4"
-          />
-          <h3 class="text-lg font-semibold">{{ course.title }}</h3>
-          <p class="text-sm text-gray-400 mt-1">{{ course.instructor }}</p>
-          <div class="mt-2 bg-gray-700 h-2 rounded-full">
-            <div
-              class="h-2 rounded-full bg-yellow-400"
-              :style="{ width: course.progress + '%' }"
-            ></div>
+
+    <!-- Dashboard Content -->
+    <main class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Stats Cards -->
+      <div class="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <p class="text-gray-400 text-sm">Courses</p>
+          <h2 class="text-2xl font-semibold">{{ dashboard.totalCourses }}</h2>
+        </div>
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <p class="text-gray-400 text-sm">Completed Lessons</p>
+          <h2 class="text-2xl font-semibold">{{ dashboard.completedLessons }}</h2>
+        </div>
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <p class="text-gray-400 text-sm">Points</p>
+          <h2 class="text-2xl font-semibold">{{ dashboard.totalPoints }}</h2>
+        </div>
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <p class="text-gray-400 text-sm">🔥 Streak Days</p>
+          <h2 class="text-2xl font-semibold">{{ dashboard.streakDays }}</h2>
+        </div>
+      </div>
+
+      <!-- Recent Courses -->
+      <section class="col-span-3 lg:col-span-2">
+        <h3 class="text-lg font-semibold mb-3">Recent Courses</h3>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="course in dashboard.recentCourses"
+            :key="course.id"
+            class="bg-[#14161A] rounded-xl p-4 border border-gray-800 hover:border-yellow-400/30 cursor-pointer"
+          >
+            <img :src="course.cover" class="w-full h-32 object-cover rounded-lg mb-3" />
+            <h4 class="font-semibold text-white">{{ course.title }}</h4>
+            <p class="text-sm text-gray-400">Progress: {{ course.progress }}%</p>
           </div>
-          <p class="text-xs text-gray-400 mt-1">{{ course.progress }}% completed</p>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Recommended Courses -->
-    <section class="mt-8">
-      <h2 class="text-xl font-semibold text-[#E0B4B2] mb-4">Recommended Courses</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Recommended -->
+      <section class="col-span-3 lg:col-span-1">
+        <h3 class="text-lg font-semibold mb-3">Recommended For You</h3>
         <div
-          v-for="course in recommendedCourses"
-          :key="course.id"
-          class="bg-[#1B1B1B] rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
+          v-for="rec in dashboard.recommended"
+          :key="rec._id"
+          class="bg-[#14161A] p-4 rounded-xl mb-3 border border-gray-800 hover:border-yellow-400/30"
         >
-          <img
-            :src="course.cover"
-            alt="Course Cover"
-            class="w-full h-32 object-cover rounded-md mb-4"
-          />
-          <h3 class="text-lg font-semibold">{{ course.title }}</h3>
-          <p class="text-sm text-gray-400 mt-1">{{ course.instructor }}</p>
+          <h4 class="font-semibold text-white">{{ rec.title }}</h4>
+          <p class="text-sm text-gray-400">Instructor: {{ rec.instructor?.name || 'Unknown' }}</p>
         </div>
-      </div>
-    </section>
-  
+      </section>
+    </main>
+  </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getStudentDashboard } from "@/services/student.js";
 
+const student = ref(JSON.parse(localStorage.getItem("user")) || {});
+const dashboard = ref({});
 
-// Quick stats
-const totalCourses = ref(12);
-const completedCourses = ref(5);
-const inProgressCourses = ref(7);
-
-// Dummy recent courses
-const recentCourses = ref([
-  { id: 1, title: "Vue.js Mastery", instructor: "Jane Doe", cover: "/course1.jpg", progress: 80 },
-  { id: 2, title: "Advanced JavaScript", instructor: "John Smith", cover: "/course2.jpg", progress: 45 },
-  { id: 3, title: "HTML & CSS Basics", instructor: "Alice Brown", cover: "/course3.jpg", progress: 100 },
-]);
-
-// Dummy recommended courses
-const recommendedCourses = ref([
-  { id: 4, title: "React for Beginners", instructor: "Bob Martin", cover: "/course4.jpg" },
-  { id: 5, title: "Node.js Essentials", instructor: "Sarah Lee", cover: "/course5.jpg" },
-  { id: 6, title: "Tailwind CSS Crash Course", instructor: "David Kim", cover: "/course6.jpg" },
-]);
+onMounted(async () => {
+  try {
+    const { data } = await getStudentDashboard(student.value._id);
+    dashboard.value = data;
+  } catch (err) {
+    console.error("Error fetching dashboard:", err);
+  }
+  });
 </script>
-
-<style scoped>
-/* Optional: scroll bar styling for the course lists */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 3px;
-}
-</style>
