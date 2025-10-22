@@ -1,10 +1,10 @@
 <template>
-  <div class="flex justify-between items-start px-10 py-6 bg-white ">
+  <div class="flex justify-between items-start px-10 py-6 bg-white">
     <!-- LEFT SIDE (Greeting + Animation) -->
     <div class="flex items-center justify-center gap-10 bg-gray-100 ml-20 rounded p-4">
       <div class="flex flex-col">
         <h1 class="text-2xl font-semibold text-gray-900 ml-4">
-          Hello {{ student?.name || 'Student' }}!
+          Hello {{ student?.name || "Student" }}!
         </h1>
         <p class="text-gray-500 text-sm ml-4">It’s good to see you again 👋</p>
       </div>
@@ -29,7 +29,7 @@
 
         <BellIcon class="w-6 h-6 text-gray-500 hover:text-yellow-400" />
 
-        <!-- Clickable Avatar -->
+        <!-- Avatar Upload -->
         <div class="relative">
           <input
             type="file"
@@ -38,14 +38,45 @@
             ref="avatarInput"
             @change="handleAvatarChange"
           />
+
+          <!-- Avatar Image -->
           <img
             :src="previewImage || student?.profileImage || '/default-avatar.jpg'"
             class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer hover:ring-2 hover:ring-yellow-400 transition-all duration-300"
-            :class="{ 'opacity-0': isUploading, 'opacity-100': !isUploading, 'scale-95': isUploading, 'scale-100': !isUploading }"
+            :class="{
+              'opacity-50': isUploading,
+              'opacity-100': !isUploading
+            }"
             alt="Avatar"
             @click="avatarInput.click()"
-            @load="isUploading = false"
           />
+
+          <!-- Spinner Overlay -->
+          <div
+            v-if="isUploading"
+            class="absolute inset-0 flex items-center justify-center bg-white/60 rounded-lg"
+          >
+            <svg
+              class="w-5 h-5 animate-spin text-yellow-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8z"
+              ></path>
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -76,18 +107,18 @@
 import { ref, onMounted } from "vue";
 import { MagnifyingGlassIcon, BellIcon } from "@heroicons/vue/24/outline";
 import lottie from "lottie-web";
-import axios from "axios";
 import { getStudentDashboard } from "@/services/student.js";
+import { uploadAvatar } from "@/services/user.js"; 
 
+// Refs
 const student = ref(JSON.parse(localStorage.getItem("user")) || {});
 const dashboard = ref({});
 const lottieContainer = ref(null);
 const avatarInput = ref(null);
-
 const isUploading = ref(false);
 const previewImage = ref(null);
 
-// Load dashboard data and Lottie animation
+// Load dashboard + animation
 onMounted(async () => {
   try {
     const { data } = await getStudentDashboard(student.value._id);
@@ -110,12 +141,17 @@ onMounted(async () => {
   });
 });
 
-// Handle avatar upload to backend
+// Handle avatar upload
 const handleAvatarChange = async (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
-  // Preview the selected image immediately
+   if (!student.value?._id) {
+    console.error("No student ID found in localStorage!");
+    return;
+  }
+
+  // Preview immediately
   const reader = new FileReader();
   reader.onload = (e) => {
     previewImage.value = e.target.result;
@@ -123,22 +159,16 @@ const handleAvatarChange = async (event) => {
   };
   reader.readAsDataURL(file);
 
-  // Prepare FormData to send to backend
-  const formData = new FormData();
-  formData.append("avatar", file);
-  formData.append("studentId", student.value._id);
-
   try {
-    const { data } = await axios.post("/api/student/upload-avatar", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    // Upload via backend
+    const data = await uploadAvatar(student.value._id, file);
 
-    // Update student profile image with server URL
+    // Update local user data
     student.value.profileImage = data.avatarUrl;
     localStorage.setItem("user", JSON.stringify(student.value));
 
-    // Set preview image to uploaded URL; fade-in handled by @load
     previewImage.value = data.avatarUrl;
+    isUploading.value = false;
   } catch (err) {
     console.error("Failed to upload avatar:", err);
     isUploading.value = false;
