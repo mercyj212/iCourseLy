@@ -11,3 +11,8 @@ export const uploadAvatar = async (file) => {
 
   return data;
 };
+
+export const getCurrentUser = async () => {
+  const { data } = await api.get("/users/me"); // backend returns { user: {...} }
+  return data;
+};
