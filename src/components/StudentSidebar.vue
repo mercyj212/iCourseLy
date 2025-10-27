@@ -33,7 +33,7 @@ import StudentSidebarLink from "./StudentSidebarLink.vue";
 
 const links = [
   { icon: "HomeIcon", label: "Dashboard", route: "/student/dashboard" },
-  { icon: "BookOpenIcon", label: "My Courses", route: "/student/courses" },
+  { icon: "BookOpenIcon", label: "My Courses", route: "/student/my-courses" },
   { icon: "AcademicCapIcon", label: "Lessons", route: "/student/lessons" },
   { icon: "ClipboardDocumentCheckIcon", label: "Assignments", route: "/student/assignments" },
   { icon: "StarIcon", label: "Progress", route: "/student/progress" },

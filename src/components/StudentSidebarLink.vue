@@ -3,12 +3,12 @@
     <router-link
       :to="route"
       class="group relative flex items-center justify-center w-full"
-      ref="iconRef"
       @mouseenter="showTooltip = true; updateTooltipPosition()"
       @mouseleave="showTooltip = false"
     >
-      <!-- Icon button -->
+      <!-- Icon Wrapper (ref moved here ✅) -->
       <div
+        ref="iconWrapper"
         class="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200"
         :class="isActive ? 'bg-yellow-500/10' : 'bg-transparent hover:bg-white/3'"
       >
@@ -19,14 +19,14 @@
         />
       </div>
 
-      <!-- Active vertical bar -->
+      <!-- Active bar -->
       <div
         v-if="isActive"
         class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-r-full"
       ></div>
     </router-link>
 
-    <!-- Tooltip rendered via Teleport -->
+    <!-- Tooltip -->
     <Teleport to="body">
       <div
         v-if="showTooltip"
@@ -43,8 +43,6 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
-
-/* heroicons (outline) */
 import {
   HomeIcon,
   BookOpenIcon,
@@ -93,15 +91,16 @@ const icons = {
 };
 
 const showTooltip = ref(false);
-const iconRef = ref(null);
+const iconWrapper = ref(null);
 const tooltipStyles = ref({ top: "0px", left: "0px" });
 
 const updateTooltipPosition = () => {
-  if (!iconRef.value) return;
-  const rect = iconRef.value.getBoundingClientRect();
+  const rect = iconWrapper.value?.getBoundingClientRect?.();
+  if (!rect) return;
+
   tooltipStyles.value = {
     top: `${rect.top + rect.height / 2}px`,
-    left: `${rect.right + 8}px`, // 8px margin to the right
+    left: `${rect.right + 8}px`,
     transform: "translateY(-50%)",
   };
 };

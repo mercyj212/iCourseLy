@@ -1,55 +1,133 @@
 <template>
-  <div class="min-h-screen bg-[#0B0B0F] text-white font-poppins">
-
-
-    <!-- Dashboard Content -->
+  <div class="min-h-screen bg-white text-white font-poppins">
     <main class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Stats Cards -->
+
+      <!-- ===================== CURRENT COURSE ===================== -->
+      <section class="col-span-3 lg:col-span-2">
+        <div
+          class="bg-gradient-to-r from-black to-transparent border border-black-400/20 rounded-2xl p-6 flex justify-between items-center"
+        >
+          <div>
+            <p class="text-gray-400 text-sm">Currently Learning</p>
+            <h2 class="text-xl font-semibold text-white mt-1">
+              {{ dashboard.currentCourse?.title || 'No active course yet' }}
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">
+              Instructor: {{ dashboard.currentCourse?.instructor || 'Unknown' }}
+            </p>
+          </div>
+          <button
+            v-if="dashboard.currentCourse"
+            class="bg-yellow-400 text-black px-4 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition"
+          >
+            Continue
+          </button>
+        </div>
+      </section>
+
+      <!-- ===================== STATS CARDS ===================== -->
       <div class="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm">Courses</p>
           <h2 class="text-2xl font-semibold">{{ dashboard.totalCourses }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm">Completed Lessons</p>
           <h2 class="text-2xl font-semibold">{{ dashboard.completedLessons }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm">Points</p>
           <h2 class="text-2xl font-semibold">{{ dashboard.totalPoints }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
-          <p class="text-gray-400 text-sm">🔥 Streak Days</p>
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
+          <p class="text-gray-400 text-sm flex items-center gap-1">🔥 Streak Days</p>
           <h2 class="text-2xl font-semibold">{{ dashboard.streakDays }}</h2>
+
+          <!-- Visual Streak -->
+          <div class="flex gap-1 mt-2">
+            <div
+              v-for="(day, i) in 7"
+              :key="i"
+              class="w-3 h-3 rounded-full"
+              :class="i < dashboard.streakDays ? 'bg-yellow-400' : 'bg-gray-700'"
+            ></div>
+          </div>
         </div>
       </div>
 
-      <!-- Recent Courses -->
-      <section class="col-span-3 lg:col-span-2">
-        <h3 class="text-lg font-semibold mb-3">Recent Courses</h3>
+      <!-- ===================== RECENT COURSES ===================== -->
+      <section class="col-span-3 lg:col-span-2 bg-black border rounded">
+        <h3 class="text-2xl font-bold px-8 py-4 flex justify-center items-center">Recent Courses</h3>
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="course in dashboard.recentCourses"
             :key="course.id"
-            class="bg-[#14161A] rounded-xl p-4 border border-gray-800 hover:border-yellow-400/30 cursor-pointer"
+            class="bg-[#14161A] rounded-xl p-4 border border-gray-800 hover:border-yellow-400/40 hover:scale-[1.02] transition-all duration-300 cursor-pointer relative"
           >
-            <img :src="course.cover" class="w-full h-32 object-cover rounded-lg mb-3" />
+            <img
+              :src="course.cover"
+              class="w-full h-32 object-cover rounded-lg mb-3"
+            />
             <h4 class="font-semibold text-white">{{ course.title }}</h4>
-            <p class="text-sm text-gray-400">Progress: {{ course.progress }}%</p>
+            <p class="text-sm text-gray-400">{{ course.instructor }}</p>
+
+            <!-- Progress Bar -->
+            <div class="mt-3">
+              <div class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Progress</span>
+                <span>{{ course.progress }}%</span>
+              </div>
+              <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                <div
+                  class="h-full bg-yellow-400 transition-all duration-700"
+                  :style="{ width: course.progress + '%' }"
+                ></div>
+              </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-3 text-xs">
+              <span class="text-gray-500">{{ course.duration }}</span>
+              <span class="bg-yellow-400/10 text-yellow-400 px-2 py-1 rounded-lg">
+                {{ course.rating }} ★
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Recommended -->
-      <section class="col-span-3 lg:col-span-1">
-        <h3 class="text-lg font-semibold mb-3">Recommended For You</h3>
-        <div
-          v-for="rec in dashboard.recommended"
-          :key="rec._id"
-          class="bg-[#14161A] p-4 rounded-xl mb-3 border border-gray-800 hover:border-yellow-400/30"
-        >
-          <h4 class="font-semibold text-white">{{ rec.title }}</h4>
-          <p class="text-sm text-gray-400">Instructor: {{ rec.instructor?.name || 'Unknown' }}</p>
+      <!-- ===================== RIGHT SIDE ===================== -->
+      <section class="col-span-3 lg:col-span-1 space-y-6">
+        <!-- LEARNING GRAPH -->
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <h4 class="font-semibold mb-2">Learning Progress</h4>
+          <canvas id="learningChart" height="150"></canvas>
+        </div>
+
+        <!-- WEEKLY GOAL -->
+        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+          <h4 class="font-semibold mb-2">Weekly Goal</h4>
+          <p class="text-sm text-gray-400 mb-2">Finish 2 new courses</p>
+          <div class="w-full bg-gray-700 rounded-full h-2">
+            <div
+              class="bg-yellow-400 h-2 rounded-full transition-all duration-700"
+              :style="{ width: '60%' }"
+            ></div>
+          </div>
+        </div>
+
+        <!-- RECOMMENDED COURSES -->
+        <div>
+          <h3 class="text-lg font-semibold mb-3">Recommended For You</h3>
+          <div
+            v-for="rec in dashboard.recommended"
+            :key="rec._id"
+            class="bg-[#14161A] p-4 rounded-xl mb-3 border border-gray-800 hover:border-yellow-400/30 transition"
+          >
+            <h4 class="font-semibold text-white">{{ rec.title }}</h4>
+            <p class="text-sm text-gray-400">
+              Instructor: {{ rec.instructor?.name || 'Unknown' }}
+            </p>
+          </div>
         </div>
       </section>
     </main>
@@ -58,6 +136,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import Chart from "chart.js/auto";
 import { getStudentDashboard } from "@/services/student.js";
 
 const student = ref(JSON.parse(localStorage.getItem("user")) || {});
@@ -67,8 +146,41 @@ onMounted(async () => {
   try {
     const { data } = await getStudentDashboard(student.value._id);
     dashboard.value = data;
+    renderChart();
   } catch (err) {
     console.error("Error fetching dashboard:", err);
   }
+});
+
+function renderChart() {
+  const ctx = document.getElementById("learningChart");
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      datasets: [
+        {
+          label: "Learning Hours",
+          data: dashboard.value.learningGraph || [0, 0, 0, 0, 0, 0, 0],
+          borderColor: "#FACC15",
+          borderWidth: 2,
+          tension: 0.4,
+          fill: false,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+          pointBackgroundColor: "#FACC15",
+        },
+      ],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: "#9CA3AF" }, grid: { color: "#1F2937" } },
+        y: { ticks: { color: "#9CA3AF" }, grid: { color: "#1F2937" } },
+      },
+    },
   });
+}
 </script>
