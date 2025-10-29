@@ -27,21 +27,21 @@
 
       <!-- ===================== STATS CARDS ===================== -->
       <div class="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
-          <p class="text-gray-400 text-sm">Courses</p>
-          <h2 class="text-2xl font-semibold">{{ dashboard.totalCourses }}</h2>
+        <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
+          <p class="text-gray-400 text-sm font-bold">Courses</p>
+          <h2 class="text-2xl font-bold">{{ dashboard.totalCourses }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
-          <p class="text-gray-400 text-sm">Completed Lessons</p>
-          <h2 class="text-2xl font-semibold">{{ dashboard.completedLessons }}</h2>
+        <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
+          <p class="text-gray-400 text-sm font-bold">Completed Lessons</p>
+          <h2 class="text-2xl font-bold">{{ dashboard.completedLessons }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
-          <p class="text-gray-400 text-sm">Points</p>
-          <h2 class="text-2xl font-semibold">{{ dashboard.totalPoints }}</h2>
+        <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
+          <p class="text-gray-400 text-sm font-bold">Points</p>
+          <h2 class="text-2xl font-bold">{{ dashboard.totalPoints }}</h2>
         </div>
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
-          <p class="text-gray-400 text-sm flex items-center gap-1">🔥 Streak Days</p>
-          <h2 class="text-2xl font-semibold">{{ dashboard.streakDays }}</h2>
+        <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
+          <p class="text-gray-400 text-sm flex items-center gap-1 font-bold">🔥 Streak Days</p>
+          <h2 class="text-2xl font-bold">{{ dashboard.streakDays }}</h2>
 
           <!-- Visual Streak -->
           <div class="flex gap-1 mt-2">
@@ -104,12 +104,12 @@
         </div>
 
         <!-- WEEKLY GOAL -->
-        <div class="bg-[#14161A] p-4 rounded-xl border border-gray-800">
+        <div class="bg-black p-4 rounded-xl border border-gray-800">
           <h4 class="font-semibold mb-2">Weekly Goal</h4>
           <p class="text-sm text-gray-400 mb-2">Finish 2 new courses</p>
           <div class="w-full bg-gray-700 rounded-full h-2">
             <div
-              class="bg-yellow-400 h-2 rounded-full transition-all duration-700"
+              class="bg-white h-2 rounded-full transition-all duration-700"
               :style="{ width: '60%' }"
             ></div>
           </div>
@@ -117,7 +117,7 @@
 
         <!-- RECOMMENDED COURSES -->
         <div>
-          <h3 class="text-lg font-semibold mb-3">Recommended For You</h3>
+          <h3 class="text-xl mb-3 text-black font-bold ">Recommended For You</h3>
           <div
             v-for="rec in dashboard.recommended"
             :key="rec._id"

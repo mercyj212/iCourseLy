@@ -12,6 +12,10 @@
       <main class="flex-1 overflow-y-auto px-10 py-8">
         <router-view />
       </main>
+
+      <!-- FOOTER -->
+      <StudentFooter />
+
     </div>
   </div>
 </template>
@@ -19,6 +23,7 @@
 <script setup>
 import StudentSidebar from "@/components/StudentSidebar.vue";
 import StudentTopbar from "@/components/StudentTopbar.vue";
+import StudentFooter from "./StudentFooter.vue";
 </script>
 
 <style scoped>

@@ -50,10 +50,13 @@ const routes = [
   path: '/student',
   component: StudentLayout,
   meta: { requiresAuth: true, role: 'student' },
+  redirect: '/student/dashboard',
+
   children: [
     { path: 'dashboard', name: 'StudentDashboard', component: StudentDashboard },
     { path: 'my-courses', name: 'MyCourses', component: MyCourses },
     { path: 'profile', name: 'StudentProfile', component: StudentProfile },
+    { path: 'browse-courses', name: 'BrowseCourses', component: BrowseCourses},
 
     // placeholders for sidebar routes
     { path: 'lessons', component: () => import('@/views/student/Lessons.vue') },

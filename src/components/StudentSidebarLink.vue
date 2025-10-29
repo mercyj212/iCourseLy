@@ -6,23 +6,23 @@
       @mouseenter="showTooltip = true; updateTooltipPosition()"
       @mouseleave="showTooltip = false"
     >
-      <!-- Icon Wrapper (ref moved here ✅) -->
+      <!-- Icon Wrapper -->
       <div
         ref="iconWrapper"
         class="w-12 h-12 flex items-center justify-center rounded-lg transition-all duration-200"
-        :class="isActive ? 'bg-yellow-500/10' : 'bg-transparent hover:bg-white/3'"
+        :class="isActive ? 'bg-gray-700' : 'bg-transparent hover:bg-white/3'"
       >
         <component
           :is="icons[icon]"
           class="w-6 h-6 text-gray-300 transition-transform duration-200 group-hover:scale-110"
-          :class="{ 'text-yellow-400': isActive, 'text-gray-300': !isActive }"
+          :class="{ 'text-white': isActive, 'text-gray-300': !isActive }"
         />
       </div>
 
       <!-- Active bar -->
       <div
         v-if="isActive"
-        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-yellow-400 rounded-r-full"
+        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
       ></div>
     </router-link>
 
@@ -68,8 +68,8 @@ const props = defineProps({
   tooltip: { type: String, default: "" },
 });
 
-const route = useRoute();
-const isActive = computed(() => route.path === props.route);
+const currentRoute = useRoute();
+const isActive = computed(() => currentRoute.path === props.route);
 
 const icons = {
   HomeIcon,
