@@ -111,6 +111,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getEnrolledCourses, getAllCourses, enrollInCourse } from "@/services/student";
+import Swal from "sweetalert2";
 
 const enrolledCourses = ref([]);
 const availableCourses = ref([]);
@@ -144,11 +145,34 @@ const enroll = async (courseId) => {
   try {
     enrollingId.value = courseId;
     await enrollInCourse(courseId);
-    alert("✅ Enrolled successfully!");
+
+    // ✅ Success modal
+    Swal.fire({
+      icon: "success",
+      title: "Enrollment Successful 🎉",
+      text: "You’ve successfully enrolled in this course!",
+      confirmButtonColor: "#000000",
+      background: "#0B0B0F",
+      color: "#fff",
+      iconColor: "#22c55e",
+      showConfirmButton: true,
+    });
+
+    // Refresh courses
     fetchCourses();
-  } catch (err) {
-    console.error("Error enrolling:", err);
-    alert("Something went wrong while enrolling.");
+  } catch (error) {
+    console.error("Error enrolling:", error);
+
+    // ❌ Error modal
+    Swal.fire({
+      icon: "error",
+      title: "Enrollment Failed",
+      text: error.response?.data?.message || "Something went wrong while enrolling.",
+      confirmButtonColor: "#facc15",
+      background: "#0B0B0F",
+      color: "#fff",
+      iconColor: "#ef4444",
+    });
   } finally {
     enrollingId.value = null;
   }

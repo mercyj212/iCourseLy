@@ -192,9 +192,10 @@ export default {
         }
 
         // Store data in localStorage
-        localStorage.setItem("accessToken", token);
+        localStorage.setItem("accessToken", response.data.accessToken);
         localStorage.setItem("role", user.role);
         localStorage.setItem("userEmail", user.email);
+        localStorage.setItem("userId", user._id);
 
         // Redirect using named routes
         if (user.role === "student") this.$router.push({ name: "StudentDashboard" });

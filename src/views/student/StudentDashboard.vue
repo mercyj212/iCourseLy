@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white text-white font-poppins">
     <main class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-
+      
       <!-- ===================== CURRENT COURSE ===================== -->
       <section class="col-span-3 lg:col-span-2">
         <div
@@ -29,19 +29,25 @@
       <div class="col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm font-bold">Courses</p>
-          <h2 class="text-2xl font-bold">{{ dashboard.totalCourses }}</h2>
+          <h2 class="text-2xl font-bold transition-all duration-500">
+            {{ dashboard.totalCourses }}
+          </h2>
         </div>
         <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm font-bold">Completed Lessons</p>
-          <h2 class="text-2xl font-bold">{{ dashboard.completedLessons }}</h2>
+          <h2 class="text-2xl font-bold transition-all duration-500">
+            {{ dashboard.completedLessons }}
+          </h2>
         </div>
         <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm font-bold">Points</p>
-          <h2 class="text-2xl font-bold">{{ dashboard.totalPoints }}</h2>
+          <h2 class="text-2xl font-bold transition-all duration-500">
+            {{ dashboard.totalPoints }}
+          </h2>
         </div>
         <div class="bg-black p-4 rounded-xl border border-gray-800 hover:border-yellow-400/20 transition">
           <p class="text-gray-400 text-sm flex items-center gap-1 font-bold">🔥 Streak Days</p>
-          <h2 class="text-2xl font-bold">{{ dashboard.streakDays }}</h2>
+          <h2 class="text-2xl font-bold transition-all duration-500">{{ dashboard.streakDays }}</h2>
 
           <!-- Visual Streak -->
           <div class="flex gap-1 mt-2">
@@ -58,7 +64,7 @@
       <!-- ===================== RECENT COURSES ===================== -->
       <section class="col-span-3 lg:col-span-2 bg-black border rounded">
         <h3 class="text-2xl font-bold px-8 py-4 flex justify-center items-center">Recent Courses</h3>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 pb-4">
           <div
             v-for="course in dashboard.recentCourses"
             :key="course.id"
@@ -117,7 +123,7 @@
 
         <!-- RECOMMENDED COURSES -->
         <div>
-          <h3 class="text-xl mb-3 text-black font-bold ">Recommended For You</h3>
+          <h3 class="text-xl mb-3 text-black font-bold">Recommended For You</h3>
           <div
             v-for="rec in dashboard.recommended"
             :key="rec._id"
@@ -135,14 +141,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import Chart from "chart.js/auto";
 import { getStudentDashboard } from "@/services/student.js";
 
 const student = ref(JSON.parse(localStorage.getItem("user")) || {});
 const dashboard = ref({});
+let chartInstance = null;
 
-onMounted(async () => {
+// ✅ Function to fetch dashboard data
+async function fetchDashboard() {
   try {
     const { data } = await getStudentDashboard(student.value._id);
     dashboard.value = data;
@@ -150,13 +158,16 @@ onMounted(async () => {
   } catch (err) {
     console.error("Error fetching dashboard:", err);
   }
-});
+}
 
+// ✅ Render chart dynamically
 function renderChart() {
   const ctx = document.getElementById("learningChart");
   if (!ctx) return;
 
-  new Chart(ctx, {
+  if (chartInstance) chartInstance.destroy(); // destroy old chart before re-rendering
+
+  chartInstance = new Chart(ctx, {
     type: "line",
     data: {
       labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -183,4 +194,14 @@ function renderChart() {
     },
   });
 }
+
+// ✅ Listen for global event when student enrolls in new course
+onMounted(async () => {
+  await fetchDashboard();
+  window.addEventListener("dashboard-updated", fetchDashboard);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("dashboard-updated", fetchDashboard);
+});
 </script>
